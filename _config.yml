@@ -1,5 +1,5 @@
 remote_theme: pages-themes/midnight@v0.2.0
 plugins:
 - jekyll-remote-theme
-title: Aleksander's homepage
-description: Skill showcase for the resume
+title: Aleksander Chmielewski
+description: Building robust data pipelines and transforming raw data into actionable insights. Passionate about scalable architecture, automation, and clean code.
