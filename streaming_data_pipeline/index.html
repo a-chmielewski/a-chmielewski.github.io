@@ -95,54 +95,85 @@
       <h2 class="section-title">Architecture Overview</h2>
       <p class="section-subtitle">Modern streaming architecture following industry best practices</p>
       
-      <div class="architecture-diagram">
-        <pre>
-┌─────────────────────┐
-│  Binance WebSocket  │
-│   Futures API       │
-│   (Live Trades)     │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Python Producer    │
-│  • WebSocket Client │
-│  • JSON Parsing     │
-│  • Error Handling   │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│   Apache Kafka      │
-│  • Topic: trades    │
-│  • Partitioned      │
-│  • Reliable Queue   │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Spark Streaming    │
-│  • Micro-batches    │
-│  • Transformations  │
-│  • Aggregations     │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│   Elasticsearch     │
-│  • Time-series Data │
-│  • Fast Indexing    │
-│  • Index: crypto-*  │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│      Kibana         │
-│  • Dashboards       │
-│  • Visualizations   │
-│  • Real-time Updates│
-└─────────────────────┘
-        </pre>
+      <div class="architecture-flow">
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🌐</span>
+            <h3 class="flow-step-title">Binance WebSocket API</h3>
+          </div>
+          <p class="flow-step-description">Real-time cryptocurrency trading data from Binance futures market</p>
+          <ul class="flow-step-features">
+            <li>Live trades</li>
+            <li>Sub-second latency</li>
+            <li>JSON events</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🐍</span>
+            <h3 class="flow-step-title">Python WebSocket Producer</h3>
+          </div>
+          <p class="flow-step-description">Ingestion layer that connects to WebSocket stream and publishes to Kafka</p>
+          <ul class="flow-step-features">
+            <li>WebSocket client</li>
+            <li>JSON parsing</li>
+            <li>Error handling</li>
+            <li>Auto-reconnect</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">📨</span>
+            <h3 class="flow-step-title">Apache Kafka</h3>
+          </div>
+          <p class="flow-step-description">Distributed message queue providing durability and decoupling</p>
+          <ul class="flow-step-features">
+            <li>Topic: crypto-trades</li>
+            <li>Persistent queue</li>
+            <li>Backpressure handling</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">⚡</span>
+            <h3 class="flow-step-title">Spark Streaming</h3>
+          </div>
+          <p class="flow-step-description">Real-time stream processing with micro-batch transformations</p>
+          <ul class="flow-step-features">
+            <li>10-second batches</li>
+            <li>Data transformation</li>
+            <li>Aggregations</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🔍</span>
+            <h3 class="flow-step-title">Elasticsearch</h3>
+          </div>
+          <p class="flow-step-description">Time-series data storage with fast indexing and search</p>
+          <ul class="flow-step-features">
+            <li>Index: crypto-trades-v2</li>
+            <li>Fast queries</li>
+            <li>Aggregations</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">📊</span>
+            <h3 class="flow-step-title">Kibana</h3>
+          </div>
+          <p class="flow-step-description">Interactive dashboards with real-time data visualization</p>
+          <ul class="flow-step-features">
+            <li>Live dashboards</li>
+            <li>Auto-refresh</li>
+            <li>Analytics</li>
+          </ul>
+        </div>
       </div>
 
       <div class="info-box">

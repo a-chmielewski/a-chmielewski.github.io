@@ -269,19 +269,140 @@ body {
 }
 
 /* Architecture Diagram */
-.architecture-diagram {
+.architecture-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+  padding: 2rem;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-  font-family: 'JetBrains Mono', monospace;
-  overflow-x: auto;
 }
 
-.architecture-diagram pre {
+.flow-step {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 153, 204, 0.05) 100%);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.flow-step:hover {
+  border-color: var(--accent-primary);
+  transform: translateX(5px);
+  box-shadow: 0 5px 20px rgba(0, 212, 255, 0.15);
+}
+
+.flow-step::after {
+  content: '▼';
+  position: absolute;
+  bottom: -1.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--accent-primary);
+  font-size: 1.5rem;
+  opacity: 0.7;
+}
+
+.flow-step:last-child::after {
+  content: '';
+}
+
+.flow-step-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.flow-step-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.flow-step-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.flow-step-description {
   color: var(--text-secondary);
-  line-height: 1.8;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0.5rem 0 0 0;
+}
+
+.flow-step-features {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.flow-step-features li {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+}
+
+/* Architecture Grid - Alternative Style */
+.architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.architecture-card {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.architecture-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15);
+}
+
+.architecture-card-number {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: var(--gradient);
+  color: var(--bg-primary);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.architecture-card h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.architecture-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
   margin: 0;
 }
 

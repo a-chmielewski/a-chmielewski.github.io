@@ -46,110 +46,58 @@
       <h2 class="section-title">System Architecture</h2>
       <p class="section-subtitle">Complete data flow from WebSocket to visualization</p>
       
-      <div class="architecture-diagram">
-        <pre>
-┌────────────────────────────────────────────────────────────────────────────┐
-│                          DATA SOURCE LAYER                                  │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                    Binance WebSocket Futures API                      │  │
-│  │                                                                        │  │
-│  │    • wss://fstream.binance.com/ws/[symbol]@aggTrade                  │  │
-│  │    • Real-time aggregate trade events                                 │  │
-│  │    • Sub-second latency                                               │  │
-│  │    • Automatic reconnection on disconnect                             │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────┬───────────────────────────────────────┘
-                                     │
-                                     │ JSON Events
-                                     ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        INGESTION LAYER                                      │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                      Python WebSocket Producer                        │  │
-│  │                                                                        │  │
-│  │    • websocket-client library                                         │  │
-│  │    • JSON parsing and validation                                      │  │
-│  │    • kafka-python producer                                            │  │
-│  │    • Error handling and retry logic                                   │  │
-│  │    • Graceful shutdown on SIGTERM                                     │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────┬───────────────────────────────────────┘
-                                     │
-                                     │ Kafka Messages
-                                     ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        MESSAGE QUEUE LAYER                                  │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                        Apache Kafka                                   │  │
-│  │                                                                        │  │
-│  │    Topic: crypto-trades                                               │  │
-│  │    • 1 partition (can be scaled)                                      │  │
-│  │    • Replication factor: 1                                            │  │
-│  │    • Retention: 7 days                                                │  │
-│  │    • Message format: JSON                                             │  │
-│  │    • At-least-once delivery                                           │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────┬───────────────────────────────────────┘
-                                     │
-                                     │ Stream
-                                     ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                      PROCESSING LAYER                                       │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                    Apache Spark Structured Streaming                  │  │
-│  │                                                                        │  │
-│  │    • Kafka consumer (spark-sql-kafka)                                 │  │
-│  │    • Micro-batch processing (10 second intervals)                     │  │
-│  │    • JSON schema inference                                            │  │
-│  │    • Data transformations:                                            │  │
-│  │      - Timestamp parsing                                              │  │
-│  │      - Type casting (price, quantity to double)                       │  │
-│  │      - Field selection and renaming                                   │  │
-│  │    • Elasticsearch-Spark connector                                    │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────┬───────────────────────────────────────┘
-                                     │
-                                     │ Batch Writes
-                                     ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        STORAGE LAYER                                        │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                          Elasticsearch                                │  │
-│  │                                                                        │  │
-│  │    Index: crypto-trades-v2                                            │  │
-│  │    • Time-series optimized                                            │  │
-│  │    • Field mappings:                                                  │  │
-│  │      - timestamp (date)                                               │  │
-│  │      - symbol (keyword)                                               │  │
-│  │      - price, quantity (double)                                       │  │
-│  │      - is_buyer_maker (boolean)                                       │  │
-│  │    • Index lifecycle management                                       │  │
-│  │    • Shards: 1, Replicas: 0                                           │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────┬───────────────────────────────────────┘
-                                     │
-                                     │ Queries
-                                     ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                      VISUALIZATION LAYER                                    │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                            Kibana                                     │  │
-│  │                                                                        │  │
-│  │    • Interactive dashboards                                           │  │
-│  │    • Time-series visualizations                                       │  │
-│  │    • Aggregations (avg, min, max)                                     │  │
-│  │    • Auto-refresh (10 second intervals)                               │  │
-│  │    • KQL filtering                                                    │  │
-│  │    • Responsive design                                                │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────────────┘
-        </pre>
+      <div class="architecture-grid">
+        <div class="architecture-card">
+          <div class="architecture-card-number">1</div>
+          <h3>🌐 Data Source Layer</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Binance WebSocket API</h4>
+          <p><strong>Endpoint:</strong> wss://fstream.binance.com/ws/[symbol]@aggTrade</p>
+          <p style="margin-top: 0.5rem;">Provides real-time aggregate trade events with sub-second latency. Supports automatic reconnection on disconnect.</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">2</div>
+          <h3>🐍 Ingestion Layer</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Python WebSocket Producer</h4>
+          <p><strong>Libraries:</strong> websocket-client, kafka-python</p>
+          <p style="margin-top: 0.5rem;">Connects to WebSocket, parses JSON events, validates data, and publishes to Kafka with error handling and retry logic.</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">3</div>
+          <h3>📨 Message Queue Layer</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Apache Kafka</h4>
+          <p><strong>Topic:</strong> crypto-trades (1 partition, 7-day retention)</p>
+          <p style="margin-top: 0.5rem;">Distributed message broker providing durability, persistence, and at-least-once delivery guarantees.</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">4</div>
+          <h3>⚡ Processing Layer</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Apache Spark Streaming</h4>
+          <p><strong>Mode:</strong> Micro-batch (10-second intervals)</p>
+          <p style="margin-top: 0.5rem;">Consumes from Kafka, applies transformations (timestamp parsing, type casting, field selection), and writes to Elasticsearch.</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">5</div>
+          <h3>💾 Storage Layer</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Elasticsearch</h4>
+          <p><strong>Index:</strong> crypto-trades-v2 (time-series optimized)</p>
+          <p style="margin-top: 0.5rem;">Search and analytics engine with field mappings for timestamp, symbol, price, quantity, and trade metadata.</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">6</div>
+          <h3>📊 Visualization Layer</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Kibana</h4>
+          <p><strong>Features:</strong> Interactive dashboards, auto-refresh</p>
+          <p style="margin-top: 0.5rem;">Provides real-time data visualization with time-series charts, aggregations, and KQL filtering capabilities.</p>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <p><strong>Data Flow:</strong> Binance WebSocket → Python Producer → Kafka → Spark Streaming → Elasticsearch → Kibana Dashboard (end-to-end latency: ~10-12 seconds)</p>
       </div>
     </div>
   </section>
