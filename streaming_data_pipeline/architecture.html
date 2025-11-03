@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture - Real-Time Crypto Trading Pipeline</title>
+  <meta name="description" content="Detailed architecture and design decisions for the streaming data pipeline.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Real-Time Crypto Trading Pipeline</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link" style="color: var(--accent-primary);">Architecture</a>
+        <a href="dashboard.html" class="project-nav-link">Dashboard</a>
+        <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">System Design</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Architecture & Design</span>
+      </h1>
+      <p class="hero-subtitle">
+        A deep dive into the architectural decisions, component interactions, and design patterns that make this streaming pipeline production-ready.
+      </p>
+    </div>
+  </section>
+
+  <!-- Architecture Diagram -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">System Architecture</h2>
+      <p class="section-subtitle">Complete data flow from WebSocket to visualization</p>
+      
+      <div class="architecture-diagram">
+        <pre>
+┌────────────────────────────────────────────────────────────────────────────┐
+│                          DATA SOURCE LAYER                                  │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                    Binance WebSocket Futures API                      │  │
+│  │                                                                        │  │
+│  │    • wss://fstream.binance.com/ws/[symbol]@aggTrade                  │  │
+│  │    • Real-time aggregate trade events                                 │  │
+│  │    • Sub-second latency                                               │  │
+│  │    • Automatic reconnection on disconnect                             │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     │ JSON Events
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                        INGESTION LAYER                                      │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                      Python WebSocket Producer                        │  │
+│  │                                                                        │  │
+│  │    • websocket-client library                                         │  │
+│  │    • JSON parsing and validation                                      │  │
+│  │    • kafka-python producer                                            │  │
+│  │    • Error handling and retry logic                                   │  │
+│  │    • Graceful shutdown on SIGTERM                                     │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     │ Kafka Messages
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                        MESSAGE QUEUE LAYER                                  │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                        Apache Kafka                                   │  │
+│  │                                                                        │  │
+│  │    Topic: crypto-trades                                               │  │
+│  │    • 1 partition (can be scaled)                                      │  │
+│  │    • Replication factor: 1                                            │  │
+│  │    • Retention: 7 days                                                │  │
+│  │    • Message format: JSON                                             │  │
+│  │    • At-least-once delivery                                           │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     │ Stream
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                      PROCESSING LAYER                                       │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                    Apache Spark Structured Streaming                  │  │
+│  │                                                                        │  │
+│  │    • Kafka consumer (spark-sql-kafka)                                 │  │
+│  │    • Micro-batch processing (10 second intervals)                     │  │
+│  │    • JSON schema inference                                            │  │
+│  │    • Data transformations:                                            │  │
+│  │      - Timestamp parsing                                              │  │
+│  │      - Type casting (price, quantity to double)                       │  │
+│  │      - Field selection and renaming                                   │  │
+│  │    • Elasticsearch-Spark connector                                    │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     │ Batch Writes
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                        STORAGE LAYER                                        │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                          Elasticsearch                                │  │
+│  │                                                                        │  │
+│  │    Index: crypto-trades-v2                                            │  │
+│  │    • Time-series optimized                                            │  │
+│  │    • Field mappings:                                                  │  │
+│  │      - timestamp (date)                                               │  │
+│  │      - symbol (keyword)                                               │  │
+│  │      - price, quantity (double)                                       │  │
+│  │      - is_buyer_maker (boolean)                                       │  │
+│  │    • Index lifecycle management                                       │  │
+│  │    • Shards: 1, Replicas: 0                                           │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     │ Queries
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                      VISUALIZATION LAYER                                    │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                            Kibana                                     │  │
+│  │                                                                        │  │
+│  │    • Interactive dashboards                                           │  │
+│  │    • Time-series visualizations                                       │  │
+│  │    • Aggregations (avg, min, max)                                     │  │
+│  │    • Auto-refresh (10 second intervals)                               │  │
+│  │    • KQL filtering                                                    │  │
+│  │    • Responsive design                                                │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────────┘
+        </pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Component Details -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Component Deep Dive</h2>
+      <p class="section-subtitle">Detailed look at each layer of the architecture</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🌐 WebSocket Producer</h3>
+          <p><strong>Responsibility:</strong> Real-time data ingestion</p>
+          <ul>
+            <li>Connects to Binance WebSocket stream</li>
+            <li>Handles connection lifecycle (connect, reconnect, disconnect)</li>
+            <li>Parses JSON messages and validates structure</li>
+            <li>Publishes to Kafka with error handling</li>
+            <li>Configurable symbol via environment variable</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>📨 Kafka Message Broker</h3>
+          <p><strong>Responsibility:</strong> Reliable message queuing</p>
+          <ul>
+            <li>Decouples producer from consumer</li>
+            <li>Provides message persistence and durability</li>
+            <li>Enables multiple consumers if needed</li>
+            <li>Handles backpressure automatically</li>
+            <li>Supports replay from specific offsets</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>⚡ Spark Streaming</h3>
+          <p><strong>Responsibility:</strong> Stream processing</p>
+          <ul>
+            <li>Consumes from Kafka topic continuously</li>
+            <li>Processes data in micro-batches (10s)</li>
+            <li>Applies schema and transformations</li>
+            <li>Handles late-arriving data</li>
+            <li>Writes to Elasticsearch in batches</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>💾 Elasticsearch</h3>
+          <p><strong>Responsibility:</strong> Fast indexing and queries</p>
+          <ul>
+            <li>Time-series data storage</li>
+            <li>Inverted index for fast searches</li>
+            <li>Aggregation engine for analytics</li>
+            <li>Horizontal scalability</li>
+            <li>RESTful API for queries</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>📊 Kibana</h3>
+          <p><strong>Responsibility:</strong> Data visualization</p>
+          <ul>
+            <li>Interactive dashboard creation</li>
+            <li>Multiple visualization types</li>
+            <li>Real-time data refresh</li>
+            <li>KQL query language</li>
+            <li>Time range filtering</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🐳 Docker Compose</h3>
+          <p><strong>Responsibility:</strong> Infrastructure orchestration</p>
+          <ul>
+            <li>Multi-container application setup</li>
+            <li>Service networking and dependencies</li>
+            <li>Environment variable management</li>
+            <li>Volume persistence</li>
+            <li>Health checks and restarts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Design Decisions -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Key Design Decisions</h2>
+      <p class="section-subtitle">Architecture choices and their rationale</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>1. Why Kafka Instead of Direct Connection?</h3>
+        <p><strong>Decision:</strong> Use Kafka as an intermediary buffer between producer and consumer</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Decoupling:</strong> Producer and consumer can fail independently without data loss</li>
+          <li><strong>Backpressure:</strong> If Spark is slow, Kafka buffers messages until ready</li>
+          <li><strong>Replay:</strong> Can reprocess historical data from any offset</li>
+          <li><strong>Scalability:</strong> Easy to add more consumers or producers</li>
+          <li><strong>Durability:</strong> Messages persist on disk, surviving restarts</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>2. Spark Micro-Batch vs. True Streaming</h3>
+        <p><strong>Decision:</strong> Use Spark Structured Streaming with 10-second micro-batches</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Efficiency:</strong> Batch writes to Elasticsearch reduce overhead</li>
+          <li><strong>Simplicity:</strong> Easier to reason about than event-by-event processing</li>
+          <li><strong>Fault Tolerance:</strong> Spark's exactly-once semantics with checkpointing</li>
+          <li><strong>Flexibility:</strong> Can add windowed aggregations easily</li>
+          <li><strong>Cost:</strong> 10-second latency acceptable for this use case</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>3. Elasticsearch for Storage</h3>
+        <p><strong>Decision:</strong> Use Elasticsearch instead of traditional database</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Time-Series:</strong> Optimized for timestamp-based data</li>
+          <li><strong>Aggregations:</strong> Built-in aggregation engine for analytics</li>
+          <li><strong>Kibana Integration:</strong> Native visualization support</li>
+          <li><strong>Performance:</strong> Fast queries on large datasets</li>
+          <li><strong>Scalability:</strong> Horizontal scaling with sharding</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>4. Single Container vs. Cluster</h3>
+        <p><strong>Decision:</strong> Single-node deployment for development/demo</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Simplicity:</strong> Easy to run on local machine</li>
+          <li><strong>Resource Efficient:</strong> Lower memory/CPU requirements</li>
+          <li><strong>Demonstration:</strong> Shows architecture without production overhead</li>
+          <li><strong>Scalability Path:</strong> Can easily convert to multi-node cluster</li>
+          <li><strong>Development:</strong> Fast iteration and debugging</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Flow -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Data Flow Timeline</h2>
+      <p class="section-subtitle">Step-by-step journey of a trade event</p>
+      
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 1: Trade Execution (t=0ms)</h3>
+        <p>A trader executes a BTC/USDT trade on Binance. The exchange aggregates this with other trades and publishes an aggregate trade event to the WebSocket stream.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 2: WebSocket Delivery (t=50ms)</h3>
+        <p>The Python producer receives the JSON message over WebSocket. It parses the event and validates the structure contains required fields.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 3: Kafka Publishing (t=100ms)</h3>
+        <p>Producer sends message to Kafka topic "crypto-trades". Kafka acknowledges receipt and persists to disk, ensuring durability.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 4: Spark Consumption (t=0-10s)</h3>
+        <p>Spark Streaming consumes messages in micro-batches every 10 seconds. It reads all messages since last batch from Kafka.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 5: Data Transformation (t=10.1s)</h3>
+        <p>Spark applies schema, parses timestamps, casts types, and selects required fields. Transformations happen in-memory using DataFrame API.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 6: Elasticsearch Write (t=10.5s)</h3>
+        <p>Spark writes transformed batch to Elasticsearch index "crypto-trades-v2". Data is indexed and becomes immediately searchable.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Step 7: Kibana Visualization (t=10.5s + refresh)</h3>
+        <p>Kibana dashboard auto-refreshes every 10 seconds, querying Elasticsearch for latest data. Charts and metrics update to reflect new trades.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scalability -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Scalability Considerations</h2>
+      <p class="section-subtitle">How this architecture scales with increasing load</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Horizontal Scaling</h3>
+          <ul>
+            <li>Kafka: Add partitions and brokers</li>
+            <li>Spark: Increase executor count</li>
+            <li>Elasticsearch: Add nodes to cluster</li>
+            <li>Producer: Run multiple instances for different symbols</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Vertical Scaling</h3>
+          <ul>
+            <li>Increase container memory limits</li>
+            <li>Allocate more CPU cores</li>
+            <li>Use faster storage (SSD)</li>
+            <li>Optimize JVM heap sizes</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Bottleneck Mitigation</h3>
+          <ul>
+            <li>Producer: Batch messages before sending</li>
+            <li>Kafka: Increase partition count</li>
+            <li>Spark: Tune micro-batch interval</li>
+            <li>Elasticsearch: Implement rollover policies</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Production Enhancements</h3>
+          <ul>
+            <li>Add monitoring (Prometheus, Grafana)</li>
+            <li>Implement alerting for failures</li>
+            <li>Set up automatic restarts</li>
+            <li>Add schema registry for versioning</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section" style="background: var(--bg-secondary); text-align: center;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Explore More</h2>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="dashboard.html" class="btn btn-primary">View Dashboard</a>
+        <a href="tech-stack.html" class="btn btn-secondary">Tech Stack Details</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

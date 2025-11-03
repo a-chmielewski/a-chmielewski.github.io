@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Crypto Trading Pipeline - Aleksander Chmielewski</title>
+  <meta name="description" content="Production-ready streaming data pipeline processing cryptocurrency trades from Binance WebSocket API using Kafka, Spark, and Elasticsearch.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Real-Time Crypto Trading Pipeline</div>
+      <div class="project-nav-links">
+        <a href="architecture.html" class="project-nav-link">Architecture</a>
+        <a href="dashboard.html" class="project-nav-link">Dashboard</a>
+        <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero">
+    <div class="hero-container">
+      <div class="hero-badge">Production-Ready Streaming Pipeline</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Real-Time Cryptocurrency Trading Data Pipeline</span>
+      </h1>
+      <p class="hero-subtitle">
+        A production-ready streaming data pipeline that processes real-time cryptocurrency trading data from Binance WebSocket API. Features distributed message queuing with Kafka, stream processing with Spark, and real-time visualization through Elasticsearch and Kibana dashboards.
+      </p>
+      <div class="hero-cta">
+        <a href="https://github.com/a-chmielewski/streaming-data-pipeline" target="_blank" class="btn btn-primary">View on GitHub</a>
+        <a href="dashboard.html" class="btn btn-secondary">See Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Highlights -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Project Highlights</h2>
+      <p class="section-subtitle">Key features demonstrating modern streaming architecture and real-time data processing</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Real-Time WebSocket Streaming</h3>
+          <p>Connects to Binance futures WebSocket API to stream live aggregate trade data. Processes cryptocurrency trades in real-time with sub-second latency.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📨</div>
+          <h3>Distributed Message Queue</h3>
+          <p>Apache Kafka provides reliable, scalable message streaming. Ensures no data loss and enables decoupled producer-consumer architecture.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔥</div>
+          <h3>Spark Stream Processing</h3>
+          <p>Apache Spark Structured Streaming processes data in micro-batches, performing aggregations and transformations before persisting to Elasticsearch.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>Elasticsearch Storage</h3>
+          <p>Time-series data indexed in Elasticsearch for fast querying and aggregations. Optimized schema for real-time analytics and dashboards.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Kibana Visualization</h3>
+          <p>Interactive dashboards displaying price movements, trade volumes, buy/sell ratios, and market trends with automatic refresh capabilities.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🐳</div>
+          <h3>Containerized Deployment</h3>
+          <p>Complete infrastructure orchestrated with Docker Compose. One-command deployment includes all services with proper networking and security.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Overview -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Architecture Overview</h2>
+      <p class="section-subtitle">Modern streaming architecture following industry best practices</p>
+      
+      <div class="architecture-diagram">
+        <pre>
+┌─────────────────────┐
+│  Binance WebSocket  │
+│   Futures API       │
+│   (Live Trades)     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Python Producer    │
+│  • WebSocket Client │
+│  • JSON Parsing     │
+│  • Error Handling   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Apache Kafka      │
+│  • Topic: trades    │
+│  • Partitioned      │
+│  • Reliable Queue   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Spark Streaming    │
+│  • Micro-batches    │
+│  • Transformations  │
+│  • Aggregations     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Elasticsearch     │
+│  • Time-series Data │
+│  • Fast Indexing    │
+│  • Index: crypto-*  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│      Kibana         │
+│  • Dashboards       │
+│  • Visualizations   │
+│  • Real-time Updates│
+└─────────────────────┘
+        </pre>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Design Philosophy:</strong> This pipeline follows a microservices architecture where each component handles a specific responsibility. The loosely coupled design allows for independent scaling and fault tolerance.</p>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="architecture.html" class="btn btn-primary">Detailed Architecture →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Schema -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Data Schema</h2>
+      <p class="section-subtitle">Processed trade events with the following structure</p>
+      
+      <div class="code-block">
+        <pre><code>{
+  "timestamp": "2025-11-03T12:30:45.123Z",
+  "symbol": "BTCUSDT",
+  "price": 107572.10,
+  "quantity": 0.045,
+  "is_buyer_maker": false,
+  "trade_id": 1234567890,
+  "trade_time_ms": 1730638245123
+}</code></pre>
+      </div>
+
+      <div class="tech-stack-grid">
+        <div class="tech-item">
+          <h4>timestamp</h4>
+          <p>ISO 8601 formatted trade execution time</p>
+        </div>
+        <div class="tech-item">
+          <h4>symbol</h4>
+          <p>Trading pair (e.g., BTCUSDT, ETHUSDT)</p>
+        </div>
+        <div class="tech-item">
+          <h4>price</h4>
+          <p>Trade execution price (double precision)</p>
+        </div>
+        <div class="tech-item">
+          <h4>quantity</h4>
+          <p>Trade volume in base currency</p>
+        </div>
+        <div class="tech-item">
+          <h4>is_buyer_maker</h4>
+          <p>Whether buyer was market maker (boolean)</p>
+        </div>
+        <div class="tech-item">
+          <h4>trade_id</h4>
+          <p>Unique aggregate trade identifier</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Technology Stack</h2>
+      <p class="section-subtitle">Built with industry-standard tools for streaming data</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Python 3.9+</h3>
+          <p><strong>WebSocket Producer</strong><br>
+          Core language for WebSocket client, JSON processing, and Kafka producer implementation.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Apache Kafka</h3>
+          <p><strong>Message Broker</strong><br>
+          Distributed streaming platform for reliable, scalable data ingestion with fault tolerance.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Apache Spark</h3>
+          <p><strong>Stream Processing</strong><br>
+          Structured Streaming for real-time data transformations and micro-batch processing.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Elasticsearch</h3>
+          <p><strong>Data Storage</strong><br>
+          Distributed search and analytics engine optimized for time-series data and aggregations.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Kibana</h3>
+          <p><strong>Visualization</strong><br>
+          Interactive dashboards and data exploration tools with real-time updates.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Docker Compose</h3>
+          <p><strong>Infrastructure</strong><br>
+          Container orchestration for reproducible deployments and service management.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="tech-stack.html" class="btn btn-secondary">Detailed Tech Stack →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CI/CD -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">CI/CD Pipeline</h2>
+      <p class="section-subtitle">Automated testing, building, and deployment workflows</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <h3>Continuous Integration</h3>
+          <p>Automated linting with Black, isort, and Flake8. Docker image builds and configuration validation on every commit.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Continuous Deployment</h3>
+          <p>Automatic builds on push to main branch. Images pushed to GitHub Container Registry with semantic versioning.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Security Scanning</h3>
+          <p>Weekly dependency vulnerability checks with Dependabot. Docker image scanning using Trivy for security issues.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h3>Integration Tests</h3>
+          <p>End-to-end testing with Docker Compose. Service health checks for Kafka and Elasticsearch connectivity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="text-align: center;">Ready to Explore?</h2>
+      <p class="section-subtitle">Dive into the documentation or run it yourself</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="dashboard.html" class="btn btn-primary">View Kibana Dashboard</a>
+        <a href="how-to-run.html" class="btn btn-secondary">Setup Guide</a>
+        <a href="https://github.com/a-chmielewski/streaming-data-pipeline" target="_blank" class="btn btn-secondary">GitHub Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

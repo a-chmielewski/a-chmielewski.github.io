@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Real-Time Crypto Trading Pipeline</title>
+  <meta name="description" content="Interactive Kibana dashboards showing real-time cryptocurrency trading data and analytics.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Real-Time Crypto Trading Pipeline</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link">Architecture</a>
+        <a href="dashboard.html" class="project-nav-link" style="color: var(--accent-primary);">Dashboard</a>
+        <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Real-Time Analytics</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Kibana Dashboard</span>
+      </h1>
+      <p class="hero-subtitle">
+        Interactive visualizations displaying live cryptocurrency trading data with price movements, trade volumes, buy/sell ratios, and market analytics updated in real-time.
+      </p>
+    </div>
+  </section>
+
+  <!-- Dashboard Overview -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Live Trading Dashboard</h2>
+      <p class="section-subtitle">Real-time monitoring of BTCUSD trading activity from Binance</p>
+      
+      <div class="info-box">
+        <p><strong>Dashboard Features:</strong> The Kibana dashboard provides a comprehensive view of cryptocurrency trading activity with multiple visualization types. Data refreshes automatically every 10 seconds to display the latest trades, price movements, and market metrics.</p>
+      </div>
+
+      <div class="dashboard-preview">
+        <img src="assets/kibana-dashboard-top.png" alt="Kibana Dashboard - Top Section" class="dashboard-image">
+        <p class="dashboard-caption">Top section: Price time-series, trade count, current price indicator, and buy/sell ratio</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>📈 BTCUSD Price Over Time</h3>
+          <p>Line chart showing price movements with sub-minute granularity. Displays trend patterns and price volatility in real-time.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>📊 Trade Count Over Time</h3>
+          <p>Area chart tracking the number of trades executed per time bucket. Helps identify periods of high market activity.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>💰 Current Price Indicator</h3>
+          <p>Large numeric display showing the most recent trade price. Updates instantly as new trades are processed.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>⚖️ Buy vs Sell Share</h3>
+          <p>Pie chart displaying the ratio of buyer-initiated vs seller-initiated trades. Indicates market sentiment.</p>
+        </div>
+      </div>
+
+      <div class="dashboard-preview" style="margin-top: 4rem;">
+        <img src="assets/kibana-dashboard-bottom.png" alt="Kibana Dashboard - Bottom Section" class="dashboard-image">
+        <p class="dashboard-caption">Bottom section: Buy/sell volume imbalance, average trade size, and price distribution histogram</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>📉 Buy/Sell Volume Imbalance</h3>
+          <p>Dual-line chart showing volume differences between buy and sell orders over time. Red indicates sell pressure, green shows buy pressure.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>📦 Average Trade Size</h3>
+          <p>Bar chart displaying average trade quantity per time interval. Helps identify large trades and institutional activity.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>📊 Price Distribution</h3>
+          <p>Histogram showing the frequency distribution of trade prices. Reveals support and resistance levels.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Features -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Interactive Features</h2>
+      <p class="section-subtitle">Powerful analytics capabilities built into the dashboard</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Auto-Refresh</h3>
+          <p>Dashboard automatically refreshes every 10 seconds to display the latest data. Configurable refresh intervals from 5 seconds to 1 hour.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Time Range Filtering</h3>
+          <p>Select custom time ranges (last 15 minutes, 1 hour, 24 hours, etc.) or pick absolute date ranges for historical analysis.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>KQL Queries</h3>
+          <p>Use Kibana Query Language to filter data dynamically. Example: "price > 100000" or "is_buyer_maker: true".</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>Drill-Down</h3>
+          <p>Click on any visualization to drill down into underlying data. View individual trade records and detailed statistics.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📥</div>
+          <h3>Export Data</h3>
+          <p>Export visualizations as CSV or PNG images. Generate reports from any time range for offline analysis.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Customizable</h3>
+          <p>Clone and modify dashboards. Add new visualizations, change colors, adjust aggregations to suit your needs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics Explained -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Metrics Explained</h2>
+      <p class="section-subtitle">Understanding the dashboard data points</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Price Metrics</h3>
+        <p><strong>What it shows:</strong> Current, minimum, maximum, and average prices over the selected time range.</p>
+        <p><strong>Why it matters:</strong> Helps identify price trends, volatility, and trading ranges. Large price swings indicate high volatility.</p>
+        <p><strong>Calculation:</strong> Aggregated from individual trade prices using Elasticsearch aggregations (avg, min, max).</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Trade Volume</h3>
+        <p><strong>What it shows:</strong> Total quantity of cryptocurrency traded in each time bucket.</p>
+        <p><strong>Why it matters:</strong> Volume indicates market activity and liquidity. High volume with price movement confirms trend strength.</p>
+        <p><strong>Calculation:</strong> Sum of the "quantity" field across all trades in the time window.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Buy vs Sell Ratio</h3>
+        <p><strong>What it shows:</strong> Percentage split between buyer-initiated (market buy) and seller-initiated (market sell) trades.</p>
+        <p><strong>Why it matters:</strong> When buyers > 50%, indicates bullish sentiment. When sellers > 50%, indicates bearish pressure.</p>
+        <p><strong>Calculation:</strong> Count trades where "is_buyer_maker" is false (buy) vs true (sell), then compute percentage.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Trade Count</h3>
+        <p><strong>What it shows:</strong> Number of individual trades executed per time interval.</p>
+        <p><strong>Why it matters:</strong> High trade count indicates active market participation. Spikes often correlate with news events.</p>
+        <p><strong>Calculation:</strong> Simple count of documents in Elasticsearch grouped by time buckets.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Price Distribution</h3>
+        <p><strong>What it shows:</strong> Histogram of trade frequency at different price levels.</p>
+        <p><strong>Why it matters:</strong> Peaks in the histogram represent price levels where most trading occurred (support/resistance).</p>
+        <p><strong>Calculation:</strong> Histogram aggregation with price buckets (e.g., $100 intervals).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Query Examples -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Sample Queries</h2>
+      <p class="section-subtitle">Useful KQL queries for data exploration</p>
+      
+      <div class="code-block">
+        <pre><code>// Find all trades above $108,000
+price > 108000
+
+// Show only buyer-initiated trades
+is_buyer_maker: false
+
+// Large trades (> 0.5 BTC)
+quantity > 0.5
+
+// Trades in specific price range
+price >= 107000 AND price <= 108000
+
+// Recent trades (last 5 minutes)
+timestamp >= "now-5m"
+
+// High-volume trades
+quantity > 0.3 AND price > 100000</code></pre>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Pro Tip:</strong> Combine multiple filters using AND/OR operators. Save frequently used queries as filters for quick access. Use the time picker in combination with KQL for powerful analysis.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Creating Custom Visualizations -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Creating Custom Visualizations</h2>
+      <p class="section-subtitle">Build your own charts and metrics</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>1. Choose Visualization Type</h3>
+          <p>Select from line charts, bar charts, pie charts, data tables, metric displays, heatmaps, and more.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>2. Select Index Pattern</h3>
+          <p>Use the "crypto-trades-v2" index pattern to access all trade data fields.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>3. Configure Aggregations</h3>
+          <p>Set up metrics (avg, sum, count, min, max) and buckets (date histogram, terms, ranges).</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>4. Apply Filters</h3>
+          <p>Add KQL filters to focus on specific symbols, price ranges, or time periods.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>5. Customize Appearance</h3>
+          <p>Adjust colors, labels, legends, and axis settings to match your preferences.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>6. Add to Dashboard</h3>
+          <p>Save the visualization and add it to an existing dashboard or create a new one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Access Information -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Accessing the Dashboard</h2>
+      <p class="section-subtitle">How to view the live dashboard in your deployment</p>
+      
+      <div class="feature-card">
+        <h3>Local Deployment Access</h3>
+        <ol>
+          <li>Start the pipeline using <code>docker compose up -d</code></li>
+          <li>Wait for Elasticsearch and Kibana to be ready (~2 minutes)</li>
+          <li>Navigate to <a href="http://localhost:5601" target="_blank">http://localhost:5601</a> in your browser</li>
+          <li>Login with username: <strong>elastic</strong> and password from your <code>.env</code> file</li>
+          <li>Go to <strong>Analytics → Dashboard</strong> in the navigation menu</li>
+          <li>Create a new dashboard or import the pre-configured one</li>
+        </ol>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Note:</strong> The dashboard requires data to be flowing through the pipeline. Make sure the WebSocket producer and Spark streaming jobs are running. It may take 10-20 seconds for data to appear after starting the services.</p>
+      </div>
+
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="how-to-run.html" class="btn btn-primary">Setup Guide</a>
+        <a href="tech-stack.html" class="btn btn-secondary">Learn About Tech Stack</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section" style="text-align: center;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Ready to Build Your Own?</h2>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="how-to-run.html" class="btn btn-primary">Run Locally</a>
+        <a href="https://github.com/a-chmielewski/streaming-data-pipeline" target="_blank" class="btn btn-secondary">View Source Code</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Stack - Real-Time Crypto Trading Pipeline</title>
+  <meta name="description" content="Detailed breakdown of technologies, tools, and frameworks used in the streaming pipeline.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Real-Time Crypto Trading Pipeline</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link">Architecture</a>
+        <a href="dashboard.html" class="project-nav-link">Dashboard</a>
+        <a href="tech-stack.html" class="project-nav-link" style="color: var(--accent-primary);">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Technology Overview</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Technology Stack</span>
+      </h1>
+      <p class="hero-subtitle">
+        A comprehensive look at the technologies, libraries, and tools that power this production-ready streaming data pipeline.
+      </p>
+    </div>
+  </section>
+
+  <!-- Core Technologies -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Core Technologies</h2>
+      <p class="section-subtitle">The foundational tools that make real-time streaming possible</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🐍 Python 3.9+</h3>
+        <p><strong>Role:</strong> Primary programming language for WebSocket producer</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Rich ecosystem for data engineering (pandas, kafka-python)</li>
+          <li>Excellent WebSocket library support</li>
+          <li>Easy JSON handling and data manipulation</li>
+          <li>Quick prototyping and development</li>
+          <li>Wide adoption in data engineering community</li>
+        </ul>
+        <p><strong>Key libraries:</strong></p>
+        <ul>
+          <li><code>websocket-client</code> - WebSocket connection handling</li>
+          <li><code>kafka-python</code> - Kafka producer client</li>
+          <li><code>json</code> - Message parsing and serialization</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>📨 Apache Kafka</h3>
+        <p><strong>Role:</strong> Distributed message queue and streaming platform</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Industry standard for real-time data pipelines</li>
+          <li>Provides durability with disk-based persistence</li>
+          <li>Enables decoupling between producers and consumers</li>
+          <li>Handles backpressure automatically</li>
+          <li>Supports horizontal scaling via partitions</li>
+        </ul>
+        <p><strong>Configuration:</strong></p>
+        <ul>
+          <li>Topic: <code>crypto-trades</code></li>
+          <li>Partitions: 1 (scalable to multiple)</li>
+          <li>Retention: 7 days</li>
+          <li>Replication factor: 1 (single-node deployment)</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>⚡ Apache Spark 3.5+</h3>
+        <p><strong>Role:</strong> Stream processing engine</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Structured Streaming API for SQL-like operations</li>
+          <li>Exactly-once processing semantics</li>
+          <li>Native Kafka integration</li>
+          <li>Micro-batch processing for efficiency</li>
+          <li>Easy integration with Elasticsearch</li>
+        </ul>
+        <p><strong>Components used:</strong></p>
+        <ul>
+          <li><code>spark-sql-kafka-0-10</code> - Kafka source connector</li>
+          <li><code>elasticsearch-spark</code> - Elasticsearch sink connector</li>
+          <li>DataFrame API for transformations</li>
+          <li>Structured Streaming for continuous processing</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🔍 Elasticsearch 8.x</h3>
+        <p><strong>Role:</strong> Search and analytics engine for data storage</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Optimized for time-series data</li>
+          <li>Fast full-text search and aggregations</li>
+          <li>Horizontal scalability with sharding</li>
+          <li>RESTful API for easy integration</li>
+          <li>Native Kibana integration</li>
+        </ul>
+        <p><strong>Index configuration:</strong></p>
+        <ul>
+          <li>Index name: <code>crypto-trades-v2</code></li>
+          <li>Shards: 1, Replicas: 0 (development setup)</li>
+          <li>Field mappings: date, keyword, double, boolean</li>
+          <li>Optimized for timestamp-based queries</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>📊 Kibana 8.x</h3>
+        <p><strong>Role:</strong> Data visualization and exploration</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Purpose-built for Elasticsearch</li>
+          <li>Powerful dashboard creation tools</li>
+          <li>Real-time data refresh capabilities</li>
+          <li>KQL (Kibana Query Language) for filtering</li>
+          <li>Multiple visualization types out-of-the-box</li>
+        </ul>
+        <p><strong>Features utilized:</strong></p>
+        <ul>
+          <li>Time-series line charts</li>
+          <li>Aggregation-based metrics</li>
+          <li>Pie charts and histograms</li>
+          <li>Auto-refresh dashboards</li>
+          <li>Interactive filtering</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Source -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Data Source</h2>
+      <p class="section-subtitle">Where the data comes from</p>
+      
+      <div class="feature-card">
+        <h3>🌐 Binance WebSocket API</h3>
+        <p><strong>Endpoint:</strong> <code>wss://fstream.binance.com/ws/[symbol]@aggTrade</code></p>
+        <p><strong>What it provides:</strong></p>
+        <ul>
+          <li>Real-time aggregate trade events from Binance futures</li>
+          <li>Sub-second latency for market data</li>
+          <li>JSON-formatted messages</li>
+          <li>Free tier available (no API key required for public streams)</li>
+          <li>Reliable WebSocket connection with heartbeat</li>
+        </ul>
+        <p><strong>Message format:</strong></p>
+        <div class="code-block">
+          <pre><code>{
+  "e": "aggTrade",
+  "E": 1730638245123,
+  "s": "BTCUSDT",
+  "a": 1234567890,
+  "p": "107572.10",
+  "q": "0.045",
+  "f": 100,
+  "l": 105,
+  "T": 1730638245100,
+  "m": false
+}</code></pre>
+        </div>
+        <p><strong>Supported symbols:</strong> Any Binance futures trading pair (BTCUSDT, ETHUSDT, SOLUSDT, etc.)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Infrastructure -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Infrastructure & DevOps</h2>
+      <p class="section-subtitle">Tools for deployment and orchestration</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🐳 Docker</h3>
+        <p><strong>Role:</strong> Containerization platform</p>
+        <p><strong>Usage:</strong></p>
+        <ul>
+          <li>Producer application containerized with Python base image</li>
+          <li>All services run in isolated containers</li>
+          <li>Consistent environment across development and production</li>
+          <li>Easy dependency management</li>
+        </ul>
+        <p><strong>Dockerfile highlights:</strong></p>
+        <div class="code-block">
+          <pre><code>FROM python:3.9-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY producer/ .
+CMD ["python", "websocket_producer.py"]</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🐙 Docker Compose</h3>
+        <p><strong>Role:</strong> Multi-container orchestration</p>
+        <p><strong>Services managed:</strong></p>
+        <ul>
+          <li><strong>kafka</strong> - Message broker (port 9092)</li>
+          <li><strong>elasticsearch</strong> - Data storage (port 9200)</li>
+          <li><strong>kibana</strong> - Visualization (port 5601)</li>
+          <li><strong>producer</strong> - WebSocket client</li>
+          <li><strong>spark-streaming</strong> - Stream processor</li>
+        </ul>
+        <p><strong>Features:</strong></p>
+        <ul>
+          <li>Dependency management (depends_on)</li>
+          <li>Environment variable injection</li>
+          <li>Network isolation and service discovery</li>
+          <li>Volume persistence for data</li>
+          <li>Health checks and restart policies</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>⚙️ Environment Configuration</h3>
+        <p><strong>.env file variables:</strong></p>
+        <div class="code-block">
+          <pre><code>ELASTIC_PASSWORD=your_secure_password
+KIBANA_PASSWORD=your_kibana_password
+SYMBOL=btcusdt</code></pre>
+        </div>
+        <p><strong>Security considerations:</strong></p>
+        <ul>
+          <li>Passwords stored in .env (not committed to git)</li>
+          <li>Elasticsearch requires authentication</li>
+          <li>Kibana access requires login</li>
+          <li>Internal Docker network for service communication</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CI/CD -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">CI/CD & Code Quality</h2>
+      <p class="section-subtitle">Automated workflows and quality assurance</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>GitHub Actions</h3>
+          <p><strong>Workflows:</strong></p>
+          <ul>
+            <li>CI: Lint, build, validate</li>
+            <li>CD: Build and push Docker images</li>
+            <li>Security: Dependency scanning</li>
+            <li>Integration: End-to-end tests</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Code Linting</h3>
+          <p><strong>Tools:</strong></p>
+          <ul>
+            <li><strong>Black</strong> - Code formatting</li>
+            <li><strong>isort</strong> - Import sorting</li>
+            <li><strong>Flake8</strong> - Style checking</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Dependabot</h3>
+          <p><strong>Features:</strong></p>
+          <ul>
+            <li>Automated dependency updates</li>
+            <li>Security vulnerability alerts</li>
+            <li>Pull request creation</li>
+            <li>Weekly update schedule</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Trivy Scanning</h3>
+          <p><strong>Security:</strong></p>
+          <ul>
+            <li>Docker image vulnerability scanning</li>
+            <li>Dependency CVE checks</li>
+            <li>Automated on every build</li>
+            <li>Reports critical issues</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monitoring & Observability -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Monitoring & Observability</h2>
+      <p class="section-subtitle">Built-in and potential additions for production monitoring</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>✅ Currently Implemented</h3>
+          <ul>
+            <li>Elasticsearch cluster health API</li>
+            <li>Kafka topic metadata and consumer lag</li>
+            <li>Docker container health checks</li>
+            <li>Spark Streaming UI (port 4040)</li>
+            <li>Application logs via Docker logs</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🚀 Production Additions</h3>
+          <ul>
+            <li><strong>Prometheus</strong> - Metrics collection</li>
+            <li><strong>Grafana</strong> - Metrics dashboards</li>
+            <li><strong>Elasticsearch monitoring</strong> - Index health</li>
+            <li><strong>Kafka lag monitoring</strong> - Consumer lag alerts</li>
+            <li><strong>Application metrics</strong> - Custom instrumentation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Version Compatibility -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Version Compatibility</h2>
+      <p class="section-subtitle">Tested versions and compatibility matrix</p>
+      
+      <div class="tech-stack-grid">
+        <div class="tech-item">
+          <h4>Python</h4>
+          <p><strong>Version:</strong> 3.9+<br>
+          <strong>Tested:</strong> 3.9, 3.10, 3.11</p>
+        </div>
+        <div class="tech-item">
+          <h4>Kafka</h4>
+          <p><strong>Version:</strong> 3.x<br>
+          <strong>Image:</strong> confluentinc/cp-kafka</p>
+        </div>
+        <div class="tech-item">
+          <h4>Spark</h4>
+          <p><strong>Version:</strong> 3.5+<br>
+          <strong>Scala:</strong> 2.12</p>
+        </div>
+        <div class="tech-item">
+          <h4>Elasticsearch</h4>
+          <p><strong>Version:</strong> 8.x<br>
+          <strong>Tested:</strong> 8.11, 8.12</p>
+        </div>
+        <div class="tech-item">
+          <h4>Kibana</h4>
+          <p><strong>Version:</strong> 8.x<br>
+          <strong>Must match:</strong> Elasticsearch version</p>
+        </div>
+        <div class="tech-item">
+          <h4>Docker</h4>
+          <p><strong>Version:</strong> 20.10+<br>
+          <strong>Compose:</strong> v2.x</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Important:</strong> Elasticsearch and Kibana versions must match exactly (e.g., both 8.11.0). Kafka and Spark versions have more flexibility but should use compatible versions as specified in the docker-compose.yml.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Performance Characteristics</h2>
+      <p class="section-subtitle">Expected performance and resource usage</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Latency</h3>
+          <ul>
+            <li>WebSocket to Kafka: < 100ms</li>
+            <li>Kafka to Spark: 10s (micro-batch interval)</li>
+            <li>Spark to Elasticsearch: < 1s</li>
+            <li>End-to-end: ~11-12 seconds</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Throughput</h3>
+          <ul>
+            <li>WebSocket: 1000+ messages/sec</li>
+            <li>Kafka: 10,000+ messages/sec</li>
+            <li>Spark: 5,000+ records/sec</li>
+            <li>Elasticsearch: 3,000+ docs/sec</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Resource Usage</h3>
+          <ul>
+            <li>Producer: ~100MB RAM, <1% CPU</li>
+            <li>Kafka: ~512MB RAM, 5-10% CPU</li>
+            <li>Spark: ~2GB RAM, 10-20% CPU</li>
+            <li>Elasticsearch: ~2GB RAM, 10-15% CPU</li>
+            <li>Kibana: ~1GB RAM, 5% CPU</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Scaling Limits</h3>
+          <ul>
+            <li>Single-node: 10K events/sec</li>
+            <li>With tuning: 50K events/sec</li>
+            <li>Multi-node cluster: 100K+ events/sec</li>
+            <li>Storage: Hundreds of GB per day</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section" style="background: var(--bg-secondary); text-align: center;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Ready to Get Started?</h2>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="how-to-run.html" class="btn btn-primary">Setup Instructions</a>
+        <a href="architecture.html" class="btn btn-secondary">View Architecture</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

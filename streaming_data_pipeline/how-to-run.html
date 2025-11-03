@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Run - Real-Time Crypto Trading Pipeline</title>
+  <meta name="description" content="Step-by-step guide to deploy and run the streaming data pipeline locally.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Real-Time Crypto Trading Pipeline</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link">Architecture</a>
+        <a href="dashboard.html" class="project-nav-link">Dashboard</a>
+        <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link" style="color: var(--accent-primary);">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Setup Guide</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">How to Run</span>
+      </h1>
+      <p class="hero-subtitle">
+        Complete guide to deploying the streaming pipeline locally. Get the entire system running in under 5 minutes with Docker Compose.
+      </p>
+    </div>
+  </section>
+
+  <!-- Prerequisites -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Prerequisites</h2>
+      <p class="section-subtitle">What you'll need before getting started</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🐳 Docker</h3>
+          <p><strong>Version:</strong> 20.10 or higher</p>
+          <p>Download from <a href="https://www.docker.com/products/docker-desktop" target="_blank">Docker Desktop</a></p>
+          <p>Verify installation:</p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>docker --version</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>🐙 Docker Compose</h3>
+          <p><strong>Version:</strong> v2.x or higher</p>
+          <p>Included with Docker Desktop</p>
+          <p>Verify installation:</p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>docker compose version</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>💾 System Resources</h3>
+          <p><strong>Minimum requirements:</strong></p>
+          <ul>
+            <li>8GB RAM (16GB recommended)</li>
+            <li>4 CPU cores</li>
+            <li>10GB free disk space</li>
+            <li>Internet connection</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🔧 Git</h3>
+          <p><strong>For cloning the repository</strong></p>
+          <p>Download from <a href="https://git-scm.com/downloads" target="_blank">git-scm.com</a></p>
+          <p>Verify installation:</p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>git --version</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Note:</strong> This pipeline can run on Windows, macOS, or Linux. All commands shown work across platforms with Docker Desktop installed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Quick Start</h2>
+      <p class="section-subtitle">Get up and running in 5 steps</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 1: Clone the Repository</h3>
+        <div class="code-block">
+          <pre><code>git clone https://github.com/a-chmielewski/streaming-data-pipeline.git
+cd streaming-data-pipeline</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 2: Create Environment File</h3>
+        <p>Create a <code>.env</code> file in the project root:</p>
+        <div class="code-block">
+          <pre><code>ELASTIC_PASSWORD=your_secure_password
+KIBANA_PASSWORD=your_kibana_password
+SYMBOL=btcusdt</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Tip:</strong> Replace passwords with strong values. The SYMBOL variable can be any Binance futures pair (ethusdt, solusdt, etc.)</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 3: Start All Services</h3>
+        <div class="code-block">
+          <pre><code>docker compose up -d</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">This command will:</p>
+        <ul>
+          <li>Pull required Docker images (first time only, ~5 minutes)</li>
+          <li>Start Kafka, Elasticsearch, Kibana, Producer, and Spark</li>
+          <li>Run all containers in detached mode (background)</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 4: Wait for Services to Initialize</h3>
+        <p>Check service status:</p>
+        <div class="code-block">
+          <pre><code>docker compose ps</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">Wait until all services show "healthy" or "running" status (~2 minutes).</p>
+        <p>Monitor logs for startup:</p>
+        <div class="code-block">
+          <pre><code>docker compose logs -f</code></pre>
+        </div>
+        <p style="margin-top: 0.5rem;">Press <code>Ctrl+C</code> to stop watching logs.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Step 5: Access Kibana Dashboard</h3>
+        <p>Open your browser and navigate to:</p>
+        <div class="code-block">
+          <pre><code>http://localhost:5601</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Login credentials:</strong></p>
+        <ul>
+          <li>Username: <code>elastic</code></li>
+          <li>Password: (from your <code>.env</code> file)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Details -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Service Endpoints</h2>
+      <p class="section-subtitle">Access points for each component</p>
+      
+      <div class="tech-stack-grid">
+        <div class="tech-item">
+          <h4>Kibana</h4>
+          <p><strong>URL:</strong> <a href="http://localhost:5601" target="_blank">http://localhost:5601</a><br>
+          <strong>Login:</strong> elastic / (your password)</p>
+        </div>
+        <div class="tech-item">
+          <h4>Elasticsearch</h4>
+          <p><strong>URL:</strong> <a href="http://localhost:9200" target="_blank">http://localhost:9200</a><br>
+          <strong>Health:</strong> GET /_cluster/health</p>
+        </div>
+        <div class="tech-item">
+          <h4>Spark UI</h4>
+          <p><strong>URL:</strong> <a href="http://localhost:4040" target="_blank">http://localhost:4040</a><br>
+          <strong>Note:</strong> Only available when job is running</p>
+        </div>
+        <div class="tech-item">
+          <h4>Kafka</h4>
+          <p><strong>Port:</strong> 9092<br>
+          <strong>Internal:</strong> Not exposed to host</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verification -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Verify Installation</h2>
+      <p class="section-subtitle">How to confirm everything is working</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>1. Check Container Status</h3>
+        <div class="code-block">
+          <pre><code>docker compose ps</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">All services should show "running" or "healthy" status.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>2. Verify Data Flow</h3>
+        <p>Check producer logs for WebSocket connection:</p>
+        <div class="code-block">
+          <pre><code>docker compose logs producer</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">You should see messages like:</p>
+        <div class="code-block">
+          <pre><code>Connected to Binance WebSocket
+Sent message to Kafka: BTCUSDT @ 107572.10</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>3. Check Kafka Topics</h3>
+        <div class="code-block">
+          <pre><code>docker compose exec kafka kafka-topics --list --bootstrap-server localhost:9092</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">Should show the <code>crypto-trades</code> topic.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>4. Verify Elasticsearch Data</h3>
+        <div class="code-block">
+          <pre><code>curl -u elastic:your_password http://localhost:9200/crypto-trades-v2/_count</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">Should return a count > 0 after ~30 seconds of runtime.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>5. Open Kibana Dashboard</h3>
+        <ol>
+          <li>Navigate to <a href="http://localhost:5601" target="_blank">http://localhost:5601</a></li>
+          <li>Login with elastic user</li>
+          <li>Go to "Analytics" → "Discover"</li>
+          <li>Create index pattern: <code>crypto-trades-v2</code></li>
+          <li>You should see incoming trade data</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Configuration -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Configuration Options</h2>
+      <p class="section-subtitle">Customize the pipeline for your needs</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Change Trading Symbol</h3>
+        <p>Edit the <code>.env</code> file:</p>
+        <div class="code-block">
+          <pre><code>SYMBOL=ethusdt  # For Ethereum
+SYMBOL=solusdt  # For Solana
+SYMBOL=adausdt  # For Cardano</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">Then restart the producer:</p>
+        <div class="code-block">
+          <pre><code>docker compose restart producer</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Adjust Spark Batch Interval</h3>
+        <p>Edit <code>app/spark_stream.py</code>:</p>
+        <div class="code-block">
+          <pre><code>.trigger(processingTime="10 seconds")  # Change to 5, 15, 30, etc.</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">Rebuild and restart:</p>
+        <div class="code-block">
+          <pre><code>docker compose up -d --build spark-streaming</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>Resource Limits</h3>
+        <p>Edit <code>docker-compose.yml</code> to adjust memory:</p>
+        <div class="code-block">
+          <pre><code>deploy:
+  resources:
+    limits:
+      memory: 4G  # Increase for better performance
+    reservations:
+      memory: 2G</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Troubleshooting -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Troubleshooting</h2>
+      <p class="section-subtitle">Common issues and solutions</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>❌ Elasticsearch Won't Start</h3>
+        <p><strong>Symptom:</strong> Container exits with memory errors</p>
+        <p><strong>Solution:</strong></p>
+        <ol>
+          <li>Increase Docker memory limit to 8GB+</li>
+          <li>On Linux, run: <code>sudo sysctl -w vm.max_map_count=262144</code></li>
+          <li>Restart: <code>docker compose restart elasticsearch</code></li>
+        </ol>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>❌ Kibana Shows "Unable to Connect"</h3>
+        <p><strong>Symptom:</strong> Kibana UI shows connection error</p>
+        <p><strong>Solution:</strong></p>
+        <ol>
+          <li>Wait 2-3 minutes for Elasticsearch to fully start</li>
+          <li>Check Elasticsearch health: <code>docker compose logs elasticsearch</code></li>
+          <li>Verify password in .env matches docker-compose.yml</li>
+          <li>Restart Kibana: <code>docker compose restart kibana</code></li>
+        </ol>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>❌ No Data Appearing</h3>
+        <p><strong>Symptom:</strong> Kibana shows 0 documents</p>
+        <p><strong>Solution:</strong></p>
+        <ol>
+          <li>Check producer logs: <code>docker compose logs producer</code></li>
+          <li>Verify WebSocket connection established</li>
+          <li>Check Kafka has messages: <code>docker compose logs kafka</code></li>
+          <li>Verify Spark is consuming: <code>docker compose logs spark-streaming</code></li>
+          <li>Wait 20-30 seconds for first batch to write</li>
+        </ol>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>❌ Producer Can't Connect to Kafka</h3>
+        <p><strong>Symptom:</strong> Producer logs show connection errors</p>
+        <p><strong>Solution:</strong></p>
+        <ol>
+          <li>Ensure Kafka is fully started: <code>docker compose ps kafka</code></li>
+          <li>Check network: <code>docker network ls</code></li>
+          <li>Restart in order: <code>docker compose restart kafka producer</code></li>
+        </ol>
+      </div>
+
+      <div class="feature-card">
+        <h3>❌ Spark Job Fails</h3>
+        <p><strong>Symptom:</strong> spark-streaming container exits</p>
+        <p><strong>Solution:</strong></p>
+        <ol>
+          <li>Check logs: <code>docker compose logs spark-streaming</code></li>
+          <li>Verify Elasticsearch is accessible</li>
+          <li>Ensure correct Elasticsearch password in environment</li>
+          <li>Increase memory allocation if OOM errors occur</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stopping -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Stopping & Cleanup</h2>
+      <p class="section-subtitle">How to shut down the pipeline</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Stop All Services</h3>
+          <div class="code-block">
+            <pre><code>docker compose down</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">Stops and removes all containers. Data persists in volumes.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Stop with Data Removal</h3>
+          <div class="code-block">
+            <pre><code>docker compose down -v</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">Stops containers and removes all data volumes. Fresh start next time.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Stop Individual Service</h3>
+          <div class="code-block">
+            <pre><code>docker compose stop producer</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">Stops only the specified service. Others keep running.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>View Logs</h3>
+          <div class="code-block">
+            <pre><code>docker compose logs -f [service]</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">Follow logs for debugging. Omit service name for all logs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Next Steps -->
+  <section class="content-section" style="background: var(--bg-secondary); text-align: center;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Next Steps</h2>
+      <p class="section-subtitle">Now that it's running, explore the system</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="dashboard.html" class="btn btn-primary">Explore Dashboard</a>
+        <a href="architecture.html" class="btn btn-secondary">Learn Architecture</a>
+        <a href="https://github.com/a-chmielewski/streaming-data-pipeline" target="_blank" class="btn btn-secondary">View Source Code</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

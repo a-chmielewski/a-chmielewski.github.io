@@ -11,10 +11,11 @@
   </div>
 
   <div class="project-card">
-    <span class="project-category">Coming Soon</span>
-    <h3>More Projects in Development</h3>
-    <p>Additional data engineering and data science projects are currently in development and will be added to this portfolio soon.</p>
-    <p><strong>Focus Areas:</strong> Real-time streaming • ML pipelines • Cloud architecture</p>
+    <span class="project-category">Data Engineering</span>
+    <h3>Real-Time Crypto Trading Pipeline</h3>
+    <p>Production-ready streaming data pipeline processing cryptocurrency trades from Binance WebSocket API. Features Kafka messaging, Spark Streaming analytics, and real-time Kibana dashboards for live trade monitoring.</p>
+    <p><strong>Stack:</strong> Python • Kafka • Spark • Elasticsearch • Kibana • Docker</p>
+    <a href="streaming_data_pipeline/index.html" class="project-link">View Project →</a>
   </div>
 
 </div>
