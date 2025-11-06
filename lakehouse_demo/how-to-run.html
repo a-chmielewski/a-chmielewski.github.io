@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Run - Lakehouse Table Format Comparison</title>
+  <meta name="description" content="Step-by-step guide to set up and run the lakehouse demo comparing Delta Lake, Iceberg, and Hudi on AWS.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Lakehouse Table Format Comparison</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="findings.html" class="project-nav-link">Key Findings</a>
+        <a href="how-to-run.html" class="project-nav-link" style="color: var(--accent-primary);">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Setup Guide</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">How to Run the Demo</span>
+      </h1>
+      <p class="hero-subtitle">
+        Complete setup instructions to replicate the lakehouse comparison experiment on AWS EMR Serverless with your own data.
+      </p>
+    </div>
+  </section>
+
+  <!-- Prerequisites -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Prerequisites</h2>
+      <p class="section-subtitle">Required tools and AWS resources</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>1. AWS Account & CLI</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code># Install AWS CLI
+pip install awscli
+
+# Configure credentials
+aws configure</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">Set up AWS CLI with credentials that have permissions for S3, EMR Serverless, and Glue.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>2. IAM Roles for EMR</h3>
+          <p>Create an IAM execution role with policies for:</p>
+          <ul>
+            <li>S3 read/write access to your bucket</li>
+            <li>Glue Catalog read/write permissions</li>
+            <li>CloudWatch Logs write access</li>
+          </ul>
+          <p style="margin-top: 1rem;"><strong>Files in repo:</strong></p>
+          <ul>
+            <li><code>infra/emr-serverless-trust.json</code> - Trust policy</li>
+            <li><code>infra/emr-serverless-exec-policy.json</code> - Execution policy</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>3. S3 Bucket</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code># Create S3 bucket
+aws s3 mb s3://your-lakehouse-bucket \
+  --region eu-central-1
+
+# Create folder structure
+aws s3api put-object \
+  --bucket your-lakehouse-bucket \
+  --key raw/
+aws s3api put-object \
+  --bucket your-lakehouse-bucket \
+  --key code/</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>4. EMR Serverless Application</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code># Create EMR Serverless application
+aws emr-serverless create-application \
+  --name lakehouse-demo \
+  --type SPARK \
+  --release-label emr-7.0.0</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">Note the <code>applicationId</code> from the response—you'll need it for job submissions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup Steps -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Setup Steps</h2>
+      <p class="section-subtitle">Prepare data and infrastructure</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 1: Download NYC Taxi Data</h3>
+        <p>Download the NYC Yellow Taxi trip records for 2024:</p>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code># Using the provided download script
+python scripts/download_tlc.py \
+  --year 2024 \
+  --months 1,2,3,4,5,6 \
+  --output-dir ./data/raw/
+
+# Or download manually from:
+# https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Expected output:</strong> Parquet files (~50MB each) for each month.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 2: Upload Data to S3</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code># Windows (PowerShell)
+.\scripts\s3_sync_raw.ps1 -BucketName your-lakehouse-bucket
+
+# Linux/Mac
+./scripts/s3_sync_raw.sh your-lakehouse-bucket
+
+# Or manually with AWS CLI
+aws s3 sync ./data/raw/ \
+  s3://your-lakehouse-bucket/raw/yellow_trips/ \
+  --exclude "*" --include "*.parquet"</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">This uploads all Parquet files to the S3 raw zone.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 3: Create Glue Databases</h3>
+        <p>Create separate databases for each table format:</p>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code># Run in Amazon Athena query editor
+CREATE DATABASE IF NOT EXISTS delta_demo
+COMMENT 'Delta Lake lakehouse tables'
+LOCATION 's3://your-lakehouse-bucket/delta/';
+
+CREATE DATABASE IF NOT EXISTS iceberg_demo
+COMMENT 'Apache Iceberg lakehouse tables'
+LOCATION 's3://your-lakehouse-bucket/iceberg/';
+
+CREATE DATABASE IF NOT EXISTS hudi_demo
+COMMENT 'Apache Hudi lakehouse tables'
+LOCATION 's3://your-lakehouse-bucket/hudi/';</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Tip:</strong> These SQL statements are also in <code>infra/create_glue_dbs.sql</code></p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Step 4: Package and Upload Spark Jobs</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code># Create deployment package
+zip -r spark_jobs.zip spark_jobs/*.py
+
+# Upload to S3
+aws s3 cp spark_jobs.zip \
+  s3://your-lakehouse-bucket/code/
+
+# Also upload requirements if needed
+aws s3 cp requirements.txt \
+  s3://your-lakehouse-bucket/code/</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">The Spark jobs are in the <code>spark_jobs/</code> directory and include all transformation logic.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Running Jobs -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Running Jobs</h2>
+      <p class="section-subtitle">Execute ETL pipelines for each format</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Job 1: Ingest Raw Data (Bronze Layer)</h3>
+        <p>Read raw Parquet files and create bronze tables:</p>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>aws emr-serverless start-job-run \
+  --application-id <YOUR_APP_ID> \
+  --execution-role-arn <YOUR_ROLE_ARN> \
+  --name "bronze-ingestion" \
+  --job-driver '{
+    "sparkSubmit": {
+      "entryPoint": "s3://your-lakehouse-bucket/code/spark_jobs/ingest_raw.py",
+      "sparkSubmitParameters": "--conf spark.hadoop.hive.metastore.client.factory.class=com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
+    }
+  }' \
+  --configuration-overrides '{
+    "monitoringConfiguration": {
+      "s3MonitoringConfiguration": {
+        "logUri": "s3://your-lakehouse-bucket/logs/"
+      }
+    }
+  }'</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>What it does:</strong> Validates data, handles nulls, filters invalid records, creates bronze table.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Job 2: Bronze to Silver - Delta Lake</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>aws emr-serverless start-job-run \
+  --application-id <YOUR_APP_ID> \
+  --execution-role-arn <YOUR_ROLE_ARN> \
+  --name "bronze-to-silver-delta" \
+  --job-driver '{
+    "sparkSubmit": {
+      "entryPoint": "s3://your-lakehouse-bucket/code/spark_jobs/bronze_to_silver_delta.py",
+      "sparkSubmitParameters": "--conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --packages io.delta:delta-spark_2.12:3.2.0"
+    }
+  }'</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Output:</strong> Delta Lake table in <code>s3://your-lakehouse-bucket/delta/yellow_trips_silver/</code></p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Job 3: Bronze to Silver - Iceberg</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>aws emr-serverless start-job-run \
+  --application-id <YOUR_APP_ID> \
+  --execution-role-arn <YOUR_ROLE_ARN> \
+  --name "bronze-to-silver-iceberg" \
+  --job-driver '{
+    "sparkSubmit": {
+      "entryPoint": "s3://your-lakehouse-bucket/code/spark_jobs/bronze_to_silver_iceberg.py",
+      "sparkSubmitParameters": "--conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions --conf spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog --conf spark.sql.catalog.glue_catalog.warehouse=s3://your-lakehouse-bucket/iceberg/ --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.0"
+    }
+  }'</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Output:</strong> Iceberg table with superior storage efficiency.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Job 4: Bronze to Silver - Hudi</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>aws emr-serverless start-job-run \
+  --application-id <YOUR_APP_ID> \
+  --execution-role-arn <YOUR_ROLE_ARN> \
+  --name "bronze-to-silver-hudi" \
+  --job-driver '{
+    "sparkSubmit": {
+      "entryPoint": "s3://your-lakehouse-bucket/code/spark_jobs/bronze_to_silver_hudi.py",
+      "sparkSubmitParameters": "--conf spark.serializer=org.apache.spark.serializer.KryoSerializer --packages org.apache.hudi:hudi-spark3.5-bundle_2.12:0.14.0"
+    }
+  }'</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Output:</strong> Hudi COW table with record-level indexing.</p>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Tip:</strong> All job configurations are also available as JSON files in the repository (<code>job-config-*.json</code>). You can use these with <code>--cli-input-json file://job-config.json</code> for easier execution.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Maintenance -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Maintenance Operations</h2>
+      <p class="section-subtitle">Optimize and clean up tables for best performance</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Delta Lake Maintenance</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>aws emr-serverless start-job-run \
+  --application-id <YOUR_APP_ID> \
+  --execution-role-arn <YOUR_ROLE_ARN> \
+  --name "maintenance-delta" \
+  --job-driver '{
+    "sparkSubmit": {
+      "entryPoint": "s3://your-bucket/code/spark_jobs/maintenance_delta.py"
+    }
+  }'</code></pre>
+          </div>
+          <p style="margin-top: 1rem;"><strong>Operations:</strong></p>
+          <ul>
+            <li>OPTIMIZE - Compact small files</li>
+            <li>VACUUM - Remove old file versions</li>
+            <li>ANALYZE TABLE - Update statistics</li>
+          </ul>
+          <p style="margin-top: 0.5rem;"><strong>Schedule:</strong> After every 10-20 writes or weekly</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Iceberg Maintenance</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code># Compaction
+CALL glue_catalog.system.rewrite_data_files(
+  table => 'iceberg_demo.yellow_trips_silver'
+);
+
+# Expire snapshots
+CALL glue_catalog.system.expire_snapshots(
+  table => 'iceberg_demo.yellow_trips_silver',
+  older_than => TIMESTAMP '2025-01-01 00:00:00'
+);</code></pre>
+          </div>
+          <p style="margin-top: 1rem;"><strong>Schedule:</strong> Nightly compaction, monthly snapshot expiration</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Hudi Maintenance</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>aws emr-serverless start-job-run \
+  --application-id <YOUR_APP_ID> \
+  --execution-role-arn <YOUR_ROLE_ARN> \
+  --name "maintenance-hudi" \
+  --job-driver '{
+    "sparkSubmit": {
+      "entryPoint": "s3://your-bucket/code/spark_jobs/maintenance_hudi.py"
+    }
+  }'</code></pre>
+          </div>
+          <p style="margin-top: 1rem;"><strong>Operations:</strong></p>
+          <ul>
+            <li>Clean - Remove old file slices</li>
+            <li>Compact - Consolidate log files</li>
+            <li>Archive - Move metadata to archive</li>
+          </ul>
+          <p style="margin-top: 0.5rem;"><strong>Schedule:</strong> Daily or on-demand</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Querying -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Querying with Athena</h2>
+      <p class="section-subtitle">Test queries to benchmark performance across formats</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Compare Record Counts</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>-- Verify all formats processed same data
+SELECT 'delta' AS format, COUNT(*) AS record_count
+FROM delta_demo.yellow_trips_silver
+UNION ALL
+SELECT 'iceberg', COUNT(*)
+FROM iceberg_demo.yellow_trips_silver
+UNION ALL
+SELECT 'hudi', COUNT(*)
+FROM hudi_demo.yellow_trips_silver;</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Query 1: Top Pickup Zones</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>-- Test partition pruning and aggregation
+SELECT "PULocationID", COUNT(*) as trip_count
+FROM delta_demo.yellow_trips_silver
+GROUP BY "PULocationID"
+ORDER BY trip_count DESC
+LIMIT 10;</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">Run this against all three formats and compare "Data scanned" in Athena query details.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Query 2: Monthly Metrics</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>-- Test time-series aggregation
+SELECT 
+  DATE_TRUNC('month', pickup_datetime) as month,
+  COUNT(*) as trips,
+  ROUND(AVG(trip_distance), 2) as avg_distance,
+  ROUND(AVG(total_amount), 2) as avg_amount
+FROM iceberg_demo.yellow_trips_silver
+GROUP BY DATE_TRUNC('month', pickup_datetime)
+ORDER BY month;</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>Time Travel Queries</h3>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code>-- Delta Lake time travel
+SELECT COUNT(*) 
+FROM delta_demo.yellow_trips_silver 
+VERSION AS OF 1;
+
+-- Iceberg time travel
+SELECT COUNT(*) 
+FROM iceberg_demo.yellow_trips_silver 
+FOR SYSTEM_TIME AS OF TIMESTAMP '2025-01-01 12:00:00';
+
+-- Hudi time travel (requires manual snapshot selection)
+SELECT COUNT(*) 
+FROM hudi_demo.yellow_trips_silver
+WHERE _hoodie_commit_time <= '20250101120000';</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Storage Analysis -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Analyzing Storage Efficiency</h2>
+      <p class="section-subtitle">Measure and compare storage costs</p>
+      
+      <div class="code-block">
+        <pre><code># Windows PowerShell
+.\scripts\metrics_s3.ps1 -BucketName your-lakehouse-bucket
+
+# Linux/Mac
+./scripts/metrics_s3.sh your-lakehouse-bucket
+
+# Or manually with AWS CLI
+aws s3 ls s3://your-lakehouse-bucket/delta/yellow_trips_silver/ \
+  --recursive --summarize --human-readable
+
+aws s3 ls s3://your-lakehouse-bucket/iceberg/yellow_trips_silver/ \
+  --recursive --summarize --human-readable
+
+aws s3 ls s3://your-lakehouse-bucket/hudi/yellow_trips_silver/ \
+  --recursive --summarize --human-readable</code></pre>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Expected Results:</strong> Iceberg should show ~50% smaller total size compared to Delta and Hudi, with fewer files and better average file sizes (7-8 MB optimal for Spark).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Troubleshooting -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Troubleshooting</h2>
+      <p class="section-subtitle">Common issues and solutions</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>EMR Job Failures</h3>
+          <p><strong>Symptom:</strong> Job fails with "Access Denied" error</p>
+          <p><strong>Solution:</strong></p>
+          <ul>
+            <li>Verify IAM execution role has S3 and Glue permissions</li>
+            <li>Check S3 bucket policy allows EMR access</li>
+            <li>Ensure correct region in S3 paths</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Athena Query Errors</h3>
+          <p><strong>Symptom:</strong> "Table not found" or "Schema mismatch"</p>
+          <p><strong>Solution:</strong></p>
+          <ul>
+            <li>Run <code>MSCK REPAIR TABLE</code> to sync partitions</li>
+            <li>Verify Glue Catalog has correct table definitions</li>
+            <li>Check case sensitivity in column/table names</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Hudi Partition Discovery</h3>
+          <p><strong>Symptom:</strong> Athena doesn't see Hudi partitions</p>
+          <p><strong>Solution:</strong></p>
+          <ul>
+            <li>Enable Hive-style partitioning in write options</li>
+            <li>Use <code>hoodie.datasource.hive_sync.partition_extractor_class</code></li>
+            <li>Run manual sync if needed</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Memory Issues</h3>
+          <p><strong>Symptom:</strong> "OutOfMemoryError" in Spark jobs</p>
+          <p><strong>Solution:</strong></p>
+          <ul>
+            <li>Increase executor memory in job config</li>
+            <li>Reduce parallelism if data is skewed</li>
+            <li>Enable dynamic allocation</li>
+            <li>Check for data quality issues causing skew</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Additional Resources</h2>
+      <p class="section-subtitle">Official documentation and references</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>📚 Documentation</h3>
+          <ul>
+            <li><a href="https://delta.io/" target="_blank">Delta Lake Docs</a></li>
+            <li><a href="https://iceberg.apache.org/" target="_blank">Apache Iceberg Docs</a></li>
+            <li><a href="https://hudi.apache.org/" target="_blank">Apache Hudi Docs</a></li>
+            <li><a href="https://docs.aws.amazon.com/emr/latest/EMR-Serverless-UserGuide/" target="_blank">EMR Serverless Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🚕 NYC TLC Data</h3>
+          <ul>
+            <li><a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page" target="_blank">TLC Trip Record Data</a></li>
+            <li><a href="https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf" target="_blank">Data Dictionary</a></li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🔗 Project Repository</h3>
+          <p>Complete source code, configuration files, and detailed documentation:</p>
+          <p style="margin-top: 1rem;">
+            <a href="https://github.com/a-chmielewski/lakehouse-demo-delta-iceberg-hudi" target="_blank" class="btn btn-primary">View on GitHub</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="text-align: center;">Ready to Experiment?</h2>
+      <p class="section-subtitle">Clone the repository and start comparing lakehouse formats</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="https://github.com/a-chmielewski/lakehouse-demo-delta-iceberg-hudi" target="_blank" class="btn btn-primary">GitHub Repository</a>
+        <a href="findings.html" class="btn btn-secondary">Review Findings</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

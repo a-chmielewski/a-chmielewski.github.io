@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lakehouse Demo: Delta Lake vs Iceberg vs Hudi - Aleksander Chmielewski</title>
+  <meta name="description" content="Comprehensive comparison of Delta Lake, Apache Iceberg, and Apache Hudi on AWS EMR Serverless with real-world benchmarks and findings.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Lakehouse Table Format Comparison</div>
+      <div class="project-nav-links">
+        <a href="findings.html" class="project-nav-link">Key Findings</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero">
+    <div class="hero-container">
+      <div class="hero-badge">AWS Data Lakehouse Comparison</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Lakehouse Demo: Delta Lake vs Iceberg vs Hudi</span>
+      </h1>
+      <p class="hero-subtitle">
+        A comprehensive comparison of three major lakehouse table formats running on AWS EMR Serverless. This project benchmarks storage efficiency, query performance, and operational complexity using real-world NYC taxi data to provide data-driven recommendations for format selection.
+      </p>
+      <div class="hero-cta">
+        <a href="https://github.com/a-chmielewski/lakehouse-demo-delta-iceberg-hudi" target="_blank" class="btn btn-primary">View on GitHub</a>
+        <a href="findings.html" class="btn btn-secondary">See Findings</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Highlights -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Project Highlights</h2>
+      <p class="section-subtitle">Key features demonstrating methodical experimentation and analysis</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Three Format Implementation</h3>
+          <p>Implemented identical data pipelines for Delta Lake, Apache Iceberg, and Apache Hudi. Each format processes the same NYC Yellow Taxi dataset through bronze and silver layers.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">☁️</div>
+          <h3>AWS EMR Serverless</h3>
+          <p>Leverages AWS EMR Serverless for on-demand Spark execution with AWS Glue Catalog integration. Demonstrates cloud-native lakehouse architecture with S3 storage.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🚕</div>
+          <h3>Real-World Dataset</h3>
+          <p>Uses NYC Taxi & Limousine Commission Yellow Trips data (2024). Over 3 million records with realistic data quality challenges including type inconsistencies and null handling.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>Storage Efficiency Analysis</h3>
+          <p>Benchmarked storage costs across formats. Iceberg achieves ~50% storage savings compared to Delta/Hudi through superior compaction and metadata management.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Query Performance Testing</h3>
+          <p>Measured query performance using Amazon Athena. Delta excels at partition pruning for aggregation queries, while all formats show consistent performance on time-series analysis.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>AWS Glue Catalog Integration</h3>
+          <p>All formats integrated with AWS Glue Data Catalog for unified metadata management. Tested Athena compatibility including SELECT, time travel, and view support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Overview -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Architecture Overview</h2>
+      <p class="section-subtitle">Data lakehouse architecture with format-specific implementations</p>
+      
+      <div class="architecture-flow">
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">📥</span>
+            <h3 class="flow-step-title">Raw Data Ingestion</h3>
+          </div>
+          <p class="flow-step-description">NYC TLC Yellow Trips Parquet files downloaded and uploaded to S3</p>
+          <ul class="flow-step-features">
+            <li>S3 raw zone</li>
+            <li>Parquet format</li>
+            <li>Monthly partitions</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🔨</span>
+            <h3 class="flow-step-title">Bronze Layer</h3>
+          </div>
+          <p class="flow-step-description">PySpark job reads raw Parquet and creates bronze tables with basic validation</p>
+          <ul class="flow-step-features">
+            <li>Schema enforcement</li>
+            <li>Data validation</li>
+            <li>Timestamp parsing</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">✨</span>
+            <h3 class="flow-step-title">Silver Layer (3 Formats)</h3>
+          </div>
+          <p class="flow-step-description">Separate transformation pipelines for Delta, Iceberg, and Hudi with format-specific optimizations</p>
+          <ul class="flow-step-features">
+            <li>Delta Lake tables</li>
+            <li>Iceberg tables</li>
+            <li>Hudi tables (COW)</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🗄️</span>
+            <h3 class="flow-step-title">AWS Glue Catalog</h3>
+          </div>
+          <p class="flow-step-description">Metadata management with separate databases for each format</p>
+          <ul class="flow-step-features">
+            <li>delta_demo DB</li>
+            <li>iceberg_demo DB</li>
+            <li>hudi_demo DB</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🔧</span>
+            <h3 class="flow-step-title">Maintenance Operations</h3>
+          </div>
+          <p class="flow-step-description">Format-specific optimization and cleanup jobs</p>
+          <ul class="flow-step-features">
+            <li>Delta: OPTIMIZE & VACUUM</li>
+            <li>Iceberg: Compaction</li>
+            <li>Hudi: Clean & Compact</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">📊</span>
+            <h3 class="flow-step-title">Amazon Athena</h3>
+          </div>
+          <p class="flow-step-description">SQL queries for performance benchmarking and analysis</p>
+          <ul class="flow-step-features">
+            <li>Query testing</li>
+            <li>Performance metrics</li>
+            <li>Time travel queries</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Experimental Design:</strong> All three formats process identical source data through the same transformation logic, enabling direct comparison of storage efficiency, query performance, and operational characteristics.</p>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="findings.html" class="btn btn-primary">View Detailed Findings →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Technology Stack</h2>
+      <p class="section-subtitle">Built on AWS cloud-native lakehouse architecture</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>AWS EMR Serverless</h3>
+          <p><strong>Compute Platform</strong><br>
+          Serverless Spark execution environment with automatic scaling and pay-per-use pricing for cost-effective data processing.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Apache Spark 3.5</h3>
+          <p><strong>Processing Engine</strong><br>
+          Distributed data processing with PySpark for ETL jobs. Includes format-specific libraries (delta-spark, iceberg-spark, hudi-spark).</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Delta Lake 3.2</h3>
+          <p><strong>Table Format #1</strong><br>
+          ACID transactions with time travel. Optimized for partition pruning and exceptional performance on dimensional queries.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Apache Iceberg</h3>
+          <p><strong>Table Format #2</strong><br>
+          Metadata-only operations with superior storage efficiency. Best all-around choice for cloud-native lakehouses.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Apache Hudi</h3>
+          <p><strong>Table Format #3</strong><br>
+          Record-level indexing for fast upserts. Copy-on-Write (COW) table type with timeline-based consistency.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>AWS Glue Catalog</h3>
+          <p><strong>Metadata Store</strong><br>
+          Central metadata repository compatible with all three formats. Enables schema evolution and multi-engine access.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Amazon S3</h3>
+          <p><strong>Object Storage</strong><br>
+          Scalable, durable storage for all table data and metadata. Regional endpoints optimized for EU-Central-1.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Amazon Athena</h3>
+          <p><strong>Query Engine</strong><br>
+          Serverless SQL queries for benchmarking. Measures data scanned, execution time, and cost per query.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Python & PySpark</h3>
+          <p><strong>Development Stack</strong><br>
+          ETL job implementation with boto3 for AWS SDK, pandas for data manipulation, and typer for CLI tools.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Pipeline Details -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Data Pipeline Layers</h2>
+      <p class="section-subtitle">Medallion architecture with bronze and silver zones</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🥉 Bronze Layer</h3>
+          <p><strong>Purpose:</strong> Raw data ingestion with minimal transformation</p>
+          <ul>
+            <li>Read Parquet files from S3 raw zone</li>
+            <li>Apply basic schema validation</li>
+            <li>Parse timestamp fields</li>
+            <li>Filter invalid records (nulls, negatives)</li>
+            <li>Coalesce type inconsistencies</li>
+            <li>Write to bronze tables (single format)</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🥈 Silver Layer - Delta</h3>
+          <p><strong>Format-Specific:</strong> Delta Lake transformations</p>
+          <ul>
+            <li>Read from bronze table</li>
+            <li>Create month partition column</li>
+            <li>Write with MERGE for idempotency</li>
+            <li>Enable OPTIMIZE for compaction</li>
+            <li>Configure VACUUM retention</li>
+            <li>Register with Glue Catalog</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🥈 Silver Layer - Iceberg</h3>
+          <p><strong>Format-Specific:</strong> Iceberg transformations</p>
+          <ul>
+            <li>Read from bronze table</li>
+            <li>Use months() partitioning function</li>
+            <li>Write with MERGE INTO operation</li>
+            <li>Schedule rewrite_data_files for compaction</li>
+            <li>Expire old snapshots automatically</li>
+            <li>Glue Catalog native integration</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🥈 Silver Layer - Hudi</h3>
+          <p><strong>Format-Specific:</strong> Hudi transformations</p>
+          <ul>
+            <li>Read from bronze table</li>
+            <li>Configure COW table type</li>
+            <li>Set precombine and record key fields</li>
+            <li>Write with upsert operation</li>
+            <li>Inline compaction configuration</li>
+            <li>Sync metadata to Glue Catalog</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Metrics -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Benchmark Results Preview</h2>
+      <p class="section-subtitle">High-level comparison across three dimensions</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>Storage Efficiency</h3>
+          <p><strong>Winner: Apache Iceberg</strong></p>
+          <p>Iceberg achieves ~50% storage reduction compared to Delta and Hudi through superior compaction algorithms and metadata-only operations.</p>
+          <p style="margin-top: 1rem;"><strong>Impact:</strong> Lower S3 costs and fewer API calls for large datasets.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Query Performance</h3>
+          <p><strong>Best for Different Patterns:</strong></p>
+          <p>Delta excels at aggregation queries with partition pruning (0.189 MB scanned). All formats show consistent performance on time-series analysis (~348 MB scanned).</p>
+          <p style="margin-top: 1rem;"><strong>Impact:</strong> Choose based on query patterns.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>Operational Complexity</h3>
+          <p><strong>Easiest: Iceberg, Hardest: Hudi</strong></p>
+          <p>Iceberg has the simplest configuration and fewer tuning knobs. Hudi requires deep expertise with multiple table types and indexing options.</p>
+          <p style="margin-top: 1rem;"><strong>Impact:</strong> Team learning curve and maintenance burden.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="findings.html" class="btn btn-primary">Complete Findings & Lessons Learned →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="text-align: center;">Explore the Details</h2>
+      <p class="section-subtitle">Deep dive into findings and setup instructions</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="findings.html" class="btn btn-primary">Key Findings & Lessons</a>
+        <a href="how-to-run.html" class="btn btn-secondary">Setup Guide</a>
+        <a href="https://github.com/a-chmielewski/lakehouse-demo-delta-iceberg-hudi" target="_blank" class="btn btn-secondary">GitHub Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

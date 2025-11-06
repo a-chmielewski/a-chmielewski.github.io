@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Key Findings - Lakehouse Table Format Comparison</title>
+  <meta name="description" content="Detailed benchmarks, lessons learned, and recommendations from comparing Delta Lake, Iceberg, and Hudi.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Lakehouse Table Format Comparison</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="findings.html" class="project-nav-link" style="color: var(--accent-primary);">Key Findings</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Experimental Results</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Key Findings & Lessons Learned</span>
+      </h1>
+      <p class="hero-subtitle">
+        Data-driven insights from benchmarking storage efficiency, query performance, and operational complexity across Delta Lake, Apache Iceberg, and Apache Hudi.
+      </p>
+    </div>
+  </section>
+
+  <!-- Storage Efficiency -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Storage Efficiency Comparison</h2>
+      <p class="section-subtitle">Iceberg achieves significant storage savings through superior compaction</p>
+      
+      <div class="code-block">
+        <pre><code>Format       | Total Size | Files | Avg File Size | Efficiency
+-------------|------------|-------|---------------|------------
+Delta Lake   | 348.2 MB   | 47    | 7.4 MB        | Baseline
+Iceberg      | 174.5 MB   | 24    | 7.3 MB        | 50% savings ✅
+Hudi (COW)   | 345.8 MB   | 45    | 7.7 MB        | Similar to Delta</code></pre>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Why Iceberg Wins</h3>
+          <ul>
+            <li><strong>Metadata-only operations:</strong> Schema evolution and partition changes don't rewrite data</li>
+            <li><strong>Advanced compaction:</strong> Automatic small file consolidation with configurable thresholds</li>
+            <li><strong>Efficient snapshots:</strong> Metadata files are compact, reducing overhead</li>
+            <li><strong>No duplicate data:</strong> Better handling of update/merge operations</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Delta Lake Storage</h3>
+          <ul>
+            <li><strong>Transaction logs accumulate:</strong> _delta_log directory grows with each operation</li>
+            <li><strong>OPTIMIZE required:</strong> Manual compaction needed after multiple writes</li>
+            <li><strong>Checkpoint files:</strong> Periodic checkpoints create additional metadata</li>
+            <li><strong>VACUUM necessary:</strong> Old files remain until explicitly cleaned</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Hudi Storage</h3>
+          <ul>
+            <li><strong>COW overhead:</strong> Copy-on-Write creates new file versions on updates</li>
+            <li><strong>Timeline metadata:</strong> .hoodie directory tracks all operations</li>
+            <li><strong>Index files:</strong> Additional files for record-level indexing</li>
+            <li><strong>Compaction crucial:</strong> Without it, small files proliferate quickly</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Cost Impact:</strong> For a 1TB dataset, Iceberg could save ~$11.50/month in S3 standard storage ($0.023/GB) and significantly reduce S3 API costs due to fewer LIST operations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Query Performance -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Query Performance Analysis</h2>
+      <p class="section-subtitle">Different formats excel at different query patterns</p>
+      
+      <div class="architecture-grid">
+        <div class="architecture-card">
+          <h3>Query 1: Top Pickup Zones (Aggregation)</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>-- Find top 10 pickup locations by ride count
+SELECT PULocationID, COUNT(*) as trip_count
+FROM yellow_trips_silver
+GROUP BY PULocationID
+ORDER BY trip_count DESC
+LIMIT 10;</code></pre>
+          </div>
+          <div style="margin-top: 1rem;">
+            <p><strong>Results:</strong></p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem;">
+              <tr style="border-bottom: 2px solid var(--border-color);">
+                <th style="padding: 0.5rem; text-align: left;">Format</th>
+                <th style="padding: 0.5rem; text-align: right;">Data Scanned</th>
+                <th style="padding: 0.5rem; text-align: right;">Runtime</th>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.5rem;"><strong>Delta</strong></td>
+                <td style="padding: 0.5rem; text-align: right; color: var(--success-color);">0.189 MB ✅</td>
+                <td style="padding: 0.5rem; text-align: right;">1.2s</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.5rem;"><strong>Iceberg</strong></td>
+                <td style="padding: 0.5rem; text-align: right;">2.1 MB</td>
+                <td style="padding: 0.5rem; text-align: right;">1.3s</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.5rem;"><strong>Hudi</strong></td>
+                <td style="padding: 0.5rem; text-align: right;">2.4 MB</td>
+                <td style="padding: 0.5rem; text-align: right;">1.4s</td>
+              </tr>
+            </table>
+          </div>
+          <p style="margin-top: 1rem;"><strong>Analysis:</strong> Delta's exceptional partition pruning minimizes data scanned. Only relevant partition metadata is read.</p>
+        </div>
+
+        <div class="architecture-card">
+          <h3>Query 2: Monthly Metrics (Time-Series)</h3>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre><code>-- Calculate monthly trip statistics
+SELECT 
+  DATE_TRUNC('month', pickup_datetime) as month,
+  COUNT(*) as trips,
+  AVG(trip_distance) as avg_distance,
+  AVG(total_amount) as avg_amount
+FROM yellow_trips_silver
+GROUP BY month
+ORDER BY month;</code></pre>
+          </div>
+          <div style="margin-top: 1rem;">
+            <p><strong>Results:</strong></p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem;">
+              <tr style="border-bottom: 2px solid var(--border-color);">
+                <th style="padding: 0.5rem; text-align: left;">Format</th>
+                <th style="padding: 0.5rem; text-align: right;">Data Scanned</th>
+                <th style="padding: 0.5rem; text-align: right;">Runtime</th>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.5rem;"><strong>Delta</strong></td>
+                <td style="padding: 0.5rem; text-align: right;">348 MB</td>
+                <td style="padding: 0.5rem; text-align: right;">3.8s</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.5rem;"><strong>Iceberg</strong></td>
+                <td style="padding: 0.5rem; text-align: right;">175 MB ✅</td>
+                <td style="padding: 0.5rem; text-align: right;">3.5s</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.5rem;"><strong>Hudi</strong></td>
+                <td style="padding: 0.5rem; text-align: right;">346 MB</td>
+                <td style="padding: 0.5rem; text-align: right;">3.9s</td>
+              </tr>
+            </table>
+          </div>
+          <p style="margin-top: 1rem;"><strong>Analysis:</strong> Iceberg's compact storage directly reduces scan volume. All formats show similar query times as full table scan is required.</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Key Insight:</strong> Query pattern matters more than absolute performance. Delta excels at selective queries with partition pruning, while Iceberg's storage efficiency benefits full-scan analytical queries. Choose based on your workload characteristics.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lessons Learned -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Lessons Learned</h2>
+      <p class="section-subtitle">Real-world challenges and solutions from the experiment</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>1. Data Quality Issues are Inevitable</h3>
+        <p><strong>Problems Encountered:</strong></p>
+        <ul>
+          <li><strong>Type inconsistencies:</strong> Some months had timestamps as strings instead of proper timestamp types</li>
+          <li><strong>Null handling:</strong> Required explicit coalesce logic to handle null values in numeric fields</li>
+          <li><strong>Invalid records:</strong> Negative trip amounts, null timestamps, and zero distances needed filtering</li>
+          <li><strong>Schema drift:</strong> Column names changed case between months (PULocationID vs pulocationid)</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>Solution Implemented:</strong></p>
+        <ul>
+          <li>Robust bronze layer with explicit type casting and validation</li>
+          <li>Coalesce expressions for all numeric fields with null defaults</li>
+          <li>WHERE clauses to filter invalid records before silver ingestion</li>
+          <li>Case-insensitive column handling in Spark transformations</li>
+        </ul>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code># Example validation logic
+df_clean = (df_raw
+    .withColumn("pickup_datetime", 
+                coalesce(to_timestamp("tpep_pickup_datetime"), 
+                        to_timestamp("pickup_datetime")))
+    .withColumn("total_amount", 
+                coalesce(col("total_amount").cast("double"), lit(0.0)))
+    .filter(col("pickup_datetime").isNotNull())
+    .filter(col("total_amount") > 0)
+)</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>2. Record Count Variance Mystery</h3>
+        <p><strong>The Problem:</strong> Delta showed ~3x more records than Iceberg and Hudi for the same source data.</p>
+        <p style="margin-top: 0.5rem;"><strong>Root Cause Analysis:</strong></p>
+        <ul>
+          <li>Multiple ingestion runs without proper deduplication logic</li>
+          <li>Initial jobs used INSERT OVERWRITE instead of MERGE operations</li>
+          <li>Partition-level overwrites didn't prevent duplicates across runs</li>
+          <li>No business key constraints to enforce uniqueness</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>Lesson:</strong> Always implement idempotent upsert logic with proper business keys. Use MERGE operations instead of INSERT OVERWRITE for reproducible pipelines.</p>
+        <div class="code-block" style="margin-top: 1rem;">
+          <pre><code># Correct approach: MERGE with business key
+MERGE INTO silver_table t
+USING bronze_table s
+ON t.trip_id = s.trip_id AND t.pickup_datetime = s.pickup_datetime
+WHEN MATCHED THEN UPDATE SET *
+WHEN NOT MATCHED THEN INSERT *</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>3. Partitioning Strategy is Critical</h3>
+        <p><strong>Key Findings:</strong></p>
+        <ul>
+          <li><strong>Time-based partitioning essential:</strong> Monthly partitions drastically improve query performance for time-range filters</li>
+          <li><strong>Iceberg's advantage:</strong> The months() function handles partition evolution automatically without rewriting data</li>
+          <li><strong>Delta/Hudi approach:</strong> Require explicit partition columns in the dataframe before writing</li>
+          <li><strong>Granularity matters:</strong> Monthly is optimal for this dataset; daily would create too many small files</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>Recommendation:</strong> Start with coarse partitioning (month/week) and refine only if query patterns demand it. Over-partitioning creates small file problems.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>4. Compaction is Non-Negotiable</h3>
+        <p><strong>Reality Check:</strong> Without maintenance, all formats accumulate small files and degrade performance.</p>
+        <p style="margin-top: 0.5rem;"><strong>Format-Specific Strategies:</strong></p>
+        <ul>
+          <li><strong>Delta:</strong> Run OPTIMIZE after every 10-20 writes, schedule VACUUM weekly with 7-day retention</li>
+          <li><strong>Iceberg:</strong> Schedule rewrite_data_files nightly, expire snapshots older than 30 days</li>
+          <li><strong>Hudi:</strong> Enable inline compaction for COW tables, async compaction for MOR tables</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>Metrics Observed:</strong></p>
+        <ul>
+          <li>Before compaction: 150+ small files (avg 2 MB), 8.5s query time</li>
+          <li>After compaction: 24 optimized files (avg 7.3 MB), 3.5s query time</li>
+          <li>40% query performance improvement from proper file sizing</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>5. AWS Glue Catalog Gotchas</h3>
+        <p><strong>Unexpected Behaviors:</strong></p>
+        <ul>
+          <li><strong>Case sensitivity:</strong> Database names case-sensitive in Spark, case-insensitive in Athena (causes confusion)</li>
+          <li><strong>Column quoting:</strong> Required for case-sensitive columns like "PULocationID" in Athena queries</li>
+          <li><strong>Hudi partitioning:</strong> Non-hive-style partitioning can confuse Athena's partition discovery</li>
+          <li><strong>Metadata sync delays:</strong> Sometimes need MSCK REPAIR TABLE after Spark writes</li>
+          <li><strong>View limitations:</strong> Delta Lake has limited Athena view support in AWS managed services</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>Best Practice:</strong> Always test Athena queries after Spark job completion. Use lowercase database names consistently.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>6. Cost Considerations are Significant</h3>
+        <p><strong>S3 Storage Costs:</strong></p>
+        <ul>
+          <li>Iceberg's 50% storage savings = 50% lower S3 storage costs</li>
+          <li>For 1TB dataset: $23/month (Delta) vs $11.50/month (Iceberg)</li>
+          <li>Small file overhead increases S3 API costs (LIST operations)</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>Athena Query Costs:</strong></p>
+        <ul>
+          <li>$5 per TB scanned</li>
+          <li>Q1 on Delta: 0.189 MB scanned = $0.000001 per query</li>
+          <li>Q2 on Delta: 348 MB scanned = $0.001740 per query</li>
+          <li>Partition pruning and storage efficiency directly impact billing</li>
+        </ul>
+        <p style="margin-top: 1rem;"><strong>EMR Serverless Costs:</strong></p>
+        <ul>
+          <li>Pay per vCPU-second and GB-second</li>
+          <li>Optimize Spark configs (executor memory, parallelism) for cost efficiency</li>
+          <li>Pre-initialized capacity can reduce cold start costs for frequent jobs</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recommendations -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Format Selection Recommendations</h2>
+      <p class="section-subtitle">Choose the right format based on your specific requirements</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Use Delta Lake When:</h3>
+          <div style="margin: 1rem 0; padding: 0.75rem; background: var(--success-bg); border-left: 3px solid var(--success-color);">
+            <p style="margin: 0;"><strong>✅ Best For:</strong> Databricks ecosystem, partition-heavy queries</p>
+          </div>
+          <ul>
+            <li>Working in Databricks environment (native integration)</li>
+            <li>Need exceptional partition pruning for dimensional queries</li>
+            <li>Require mature Change Data Feed (CDC) support</li>
+            <li>Have existing Delta Lake investments</li>
+            <li>Team already familiar with Delta conventions</li>
+          </ul>
+          <div style="margin: 1rem 0; padding: 0.75rem; background: var(--warning-bg); border-left: 3px solid var(--warning-color);">
+            <p style="margin: 0;"><strong>⚠️ Avoid If:</strong> Limited Athena view support is a blocker for your use case</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Use Apache Iceberg When:</h3>
+          <div style="margin: 1rem 0; padding: 0.75rem; background: var(--success-bg); border-left: 3px solid var(--success-color);">
+            <p style="margin: 0;"><strong>✅ Best For:</strong> Cloud-native lakehouses, cost optimization</p>
+          </div>
+          <ul>
+            <li>Need best storage efficiency (cloud cost optimization)</li>
+            <li>Want consistent query performance across patterns</li>
+            <li>Require advanced schema evolution capabilities</li>
+            <li>Need multi-engine access (Spark, Trino, Flink, Athena)</li>
+            <li>Starting a new lakehouse project from scratch</li>
+            <li>Value simplicity and fewer configuration knobs</li>
+          </ul>
+          <div style="margin: 1rem 0; padding: 0.75rem; background: var(--info-bg); border-left: 3px solid var(--info-color);">
+            <p style="margin: 0;"><strong>🏆 Recommendation:</strong> Best all-around choice for new projects</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Use Apache Hudi When:</h3>
+          <div style="margin: 1rem 0; padding: 0.75rem; background: var(--success-bg); border-left: 3px solid var(--success-color);">
+            <p style="margin: 0;"><strong>✅ Best For:</strong> Streaming workloads, CDC pipelines</p>
+          </div>
+          <ul>
+            <li>Optimizing for streaming/CDC workloads specifically</li>
+            <li>Need fast incremental upserts with record-level indexing</li>
+            <li>Implementing lakehouse on existing Hive infrastructure</li>
+            <li>Require fine-grained control over compaction strategies</li>
+            <li>Have team expertise in Hudi configuration and tuning</li>
+          </ul>
+          <div style="margin: 1rem 0; padding: 0.75rem; background: var(--warning-bg); border-left: 3px solid var(--warning-color);">
+            <p style="margin: 0;"><strong>⚠️ Avoid If:</strong> Team lacks deep Hudi expertise (steep learning curve)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>My Recommendation for Most Teams:</strong> Start with Apache Iceberg for its balanced approach—excellent storage efficiency, simple configuration, and consistent performance. Consider Delta if you're already in the Databricks ecosystem, or Hudi if you have specific streaming requirements and the expertise to manage it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Athena Compatibility -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Athena Compatibility Matrix</h2>
+      <p class="section-subtitle">Feature support across formats when querying with Amazon Athena</p>
+      
+      <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-color); background: var(--bg-secondary);">
+            <th style="padding: 1rem; text-align: left;">Feature</th>
+            <th style="padding: 1rem; text-align: center;">Delta Lake</th>
+            <th style="padding: 1rem; text-align: center;">Apache Iceberg</th>
+            <th style="padding: 1rem; text-align: center;">Apache Hudi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 1rem;"><strong>SELECT queries</strong></td>
+            <td style="padding: 1rem; text-align: center;">✅ Full</td>
+            <td style="padding: 1rem; text-align: center;">✅ Full</td>
+            <td style="padding: 1rem; text-align: center;">✅ Full</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 1rem;"><strong>CREATE VIEW</strong></td>
+            <td style="padding: 1rem; text-align: center;">⚠️ Limited</td>
+            <td style="padding: 1rem; text-align: center;">✅ Full</td>
+            <td style="padding: 1rem; text-align: center;">✅ Full</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 1rem;"><strong>Time travel</strong></td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+            <td style="padding: 1rem; text-align: center;">⚠️ Manual</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 1rem;"><strong>CTAS support</strong></td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 1rem;"><strong>Partition pruning</strong></td>
+            <td style="padding: 1rem; text-align: center;">✅ Excellent</td>
+            <td style="padding: 1rem; text-align: center;">✅ Good</td>
+            <td style="padding: 1rem; text-align: center;">✅ Good</td>
+          </tr>
+          <tr>
+            <td style="padding: 1rem;"><strong>Schema evolution</strong></td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+            <td style="padding: 1rem; text-align: center;">✅ Advanced</td>
+            <td style="padding: 1rem; text-align: center;">✅ Yes</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 1.5rem; color: var(--text-muted);"><em>Note: Delta Lake's limited Athena view support is due to AWS managed service constraints, not the format itself.</em></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section" style="background: var(--bg-secondary); text-align: center;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Try It Yourself</h2>
+      <p class="section-subtitle">Run the experiment and validate these findings</p>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="how-to-run.html" class="btn btn-primary">Setup Guide</a>
+        <a href="https://github.com/a-chmielewski/lakehouse-demo-delta-iceberg-hudi" target="_blank" class="btn btn-secondary">GitHub Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

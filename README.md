@@ -19,6 +19,14 @@
   </div>
 
   <div class="project-card">
+    <span class="project-category">Data Engineering</span>
+    <h3>Lakehouse Table Format Comparison</h3>
+    <p>Comprehensive comparison of Delta Lake, Apache Iceberg, and Apache Hudi on AWS EMR Serverless. Benchmarked storage efficiency, query performance, and operational complexity using real-world NYC taxi data with detailed findings and recommendations.</p>
+    <p><strong>Stack:</strong> AWS EMR • Spark • Delta Lake • Iceberg • Hudi • Athena • Glue</p>
+    <a href="lakehouse_demo/index.html" class="project-link">View Project →</a>
+  </div>
+
+  <div class="project-card">
     <span class="project-category">Coming Soon</span>
     <h3>More Projects in Development</h3>
     <p>Additional data engineering and data science projects are currently in development and will be added to this portfolio soon.</p>
