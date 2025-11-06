@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Run - OpenMeteo ETL Pipeline</title>
+  <meta name="description" content="Step-by-step guide to deploy and run the OpenMeteo ETL pipeline locally with Docker Compose. Includes prerequisites, setup instructions, and troubleshooting tips.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/e2e-style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">OpenMeteo Weather ETL Pipeline</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="dashboard.html" class="project-nav-link">Dashboard</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero">
+    <div class="hero-container">
+      <div class="hero-badge">Setup Guide</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">How to Run Locally</span>
+      </h1>
+      <p class="hero-subtitle">
+        Complete step-by-step guide to deploy the OpenMeteo ETL pipeline on your local machine. All services run in Docker containers for easy setup and reproducibility.
+      </p>
+      <div class="hero-cta">
+        <a href="https://github.com/a-chmielewski/endtoend-etl-openmeteo" target="_blank" class="btn btn-primary">Clone Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prerequisites -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Prerequisites</h2>
+      <p class="section-subtitle">Required software and system requirements</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🐳</div>
+          <h3>Docker & Docker Compose</h3>
+          <p><strong>Version Requirements:</strong></p>
+          <ul>
+            <li>Docker Engine 20.10+</li>
+            <li>Docker Compose v2.0+</li>
+            <li>Available on Windows, macOS, and Linux</li>
+          </ul>
+          <p style="margin-top: 1rem;"><a href="https://docs.docker.com/get-docker/" target="_blank" style="color: var(--accent-primary);">Download Docker →</a></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💻</div>
+          <h3>System Resources</h3>
+          <p><strong>Minimum Requirements:</strong></p>
+          <ul>
+            <li>8 GB RAM (16 GB recommended)</li>
+            <li>10 GB free disk space</li>
+            <li>Multi-core CPU (4+ cores recommended)</li>
+            <li>Stable internet connection</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>Git & Python (Optional)</h3>
+          <p><strong>For Development:</strong></p>
+          <ul>
+            <li>Git for cloning the repository</li>
+            <li>Python 3.9+ (optional, for local development)</li>
+            <li>pip and virtualenv (if using Python locally)</li>
+          </ul>
+          <p style="margin-top: 1rem;"><em>Note: All Python dependencies run in containers</em></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>No API Keys Required</h3>
+          <p><strong>Free Data Source:</strong></p>
+          <ul>
+            <li>Open-Meteo API requires no authentication</li>
+            <li>No registration or API keys needed</li>
+            <li>Free for personal and commercial use</li>
+            <li>Rate limits are generous for this use case</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Quick Start</h2>
+      <p class="section-subtitle">Get the pipeline running in under 10 minutes</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Step 1: Clone Repository</h3>
+          <p>Clone the GitHub repository to your local machine:</p>
+          <div class="code-block">
+            <pre><code>git clone https://github.com/a-chmielewski/endtoend-etl-openmeteo.git
+cd endtoend-etl-openmeteo</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Step 2: Configure Environment</h3>
+          <p>Copy the example environment file and customize if needed:</p>
+          <div class="code-block">
+            <pre><code>cp .env.example .env
+
+# Edit .env if you want to change:
+# - Database credentials
+# - Metabase admin password
+# - MinIO access keys</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Step 3: Start Infrastructure</h3>
+          <p>Start the core services (MinIO, PostgreSQL, Metabase):</p>
+          <div class="code-block">
+            <pre><code>docker compose up -d minio analytics-db metabase
+
+# Wait for services to be healthy (30-60 seconds)
+docker compose ps</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Step 4: Run Initial Ingestion</h3>
+          <p>Extract weather data and load to staging:</p>
+          <div class="code-block">
+            <pre><code># Extract data to MinIO
+python ingestion/extractor/run_once.py
+
+# Load data to PostgreSQL
+python ingestion/loader/run_loader.py</code></pre>
+          </div>
+          <p style="margin-top: 1rem;"><em>Alternative: Use docker exec if Python not installed locally</em></p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Step 5: Run dbt Transformations</h3>
+          <p>Transform staging data into analytical marts:</p>
+          <div class="code-block">
+            <pre><code>cd dbt_project
+
+# Install dependencies
+dbt deps
+
+# Run transformations
+dbt run
+
+# Run tests
+dbt test</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Step 6: Access Metabase</h3>
+          <p>Open your browser and navigate to Metabase:</p>
+          <div class="code-block">
+            <pre><code>http://localhost:3000
+
+# First-time setup:
+# 1. Create admin account
+# 2. Connect to PostgreSQL
+# 3. Explore fct_city_day table
+# 4. Create visualizations</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Airflow Setup -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Airflow Orchestration</h2>
+      <p class="section-subtitle">Enable automated scheduling with Apache Airflow</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Start Airflow Services</h3>
+          <p>Launch Airflow with scheduler and webserver:</p>
+          <div class="code-block">
+            <pre><code># Initialize Airflow database
+docker compose up -d airflow-db airflow-init
+
+# Wait for initialization to complete
+docker compose logs airflow-init
+
+# Start Airflow services
+docker compose up -d airflow-scheduler airflow-webserver</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Access Airflow UI</h3>
+          <p>Open the Airflow web interface:</p>
+          <div class="code-block">
+            <pre><code>http://localhost:8080
+
+# Default credentials:
+Username: airflow
+Password: airflow</code></pre>
+          </div>
+          <p style="margin-top: 1rem;">The ETL DAG will run automatically on an hourly schedule.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>DAG Configuration</h3>
+          <p><strong>Weather ETL DAG Details:</strong></p>
+          <ul>
+            <li><strong>Schedule:</strong> Hourly (@hourly)</li>
+            <li><strong>Tasks:</strong> Extract → Validate → Load → Transform</li>
+            <li><strong>Retries:</strong> 3 attempts with 5-minute delays</li>
+            <li><strong>Dependencies:</strong> Sequential task execution</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Manual DAG Trigger</h3>
+          <p>Run the pipeline manually from Airflow UI:</p>
+          <ol>
+            <li>Navigate to <strong>DAGs</strong> page</li>
+            <li>Find <code>weather_etl_pipeline</code></li>
+            <li>Toggle to <strong>ON</strong> (if paused)</li>
+            <li>Click <strong>Play</strong> button to trigger manually</li>
+            <li>Monitor task execution in <strong>Graph</strong> view</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Access -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Service Access Points</h2>
+      <p class="section-subtitle">URLs and credentials for all services</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>URL</th>
+            <th>Credentials</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Metabase</strong></td>
+            <td><a href="http://localhost:3000" target="_blank" style="color: var(--accent-primary);">localhost:3000</a></td>
+            <td>Setup on first access</td>
+            <td>BI dashboards & analytics</td>
+          </tr>
+          <tr>
+            <td><strong>Airflow</strong></td>
+            <td><a href="http://localhost:8080" target="_blank" style="color: var(--accent-primary);">localhost:8080</a></td>
+            <td>airflow / airflow</td>
+            <td>Workflow orchestration</td>
+          </tr>
+          <tr>
+            <td><strong>MinIO Console</strong></td>
+            <td><a href="http://localhost:9001" target="_blank" style="color: var(--accent-primary);">localhost:9001</a></td>
+            <td>See .env file</td>
+            <td>Object storage UI</td>
+          </tr>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>localhost:5432</td>
+            <td>See .env file</td>
+            <td>Data warehouse</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Security Note:</strong> Default credentials are provided for local development. For production deployments, always change default passwords and use environment-specific secrets management.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Troubleshooting -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Troubleshooting</h2>
+      <p class="section-subtitle">Common issues and solutions</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Services Not Starting</h3>
+          <p><strong>Problem:</strong> Docker containers fail to start or crash immediately.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li>Check Docker daemon is running: <code>docker ps</code></li>
+            <li>Verify sufficient disk space: <code>df -h</code></li>
+            <li>Check logs: <code>docker compose logs [service-name]</code></li>
+            <li>Restart Docker Desktop (Windows/macOS)</li>
+            <li>Remove containers and retry: <code>docker compose down -v</code></li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Port Already in Use</h3>
+          <p><strong>Problem:</strong> Error about port 5432, 3000, or 8080 already in use.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li>Stop conflicting services (local PostgreSQL, etc.)</li>
+            <li>Change ports in <code>docker-compose.yml</code></li>
+            <li>Check running processes: <code>netstat -an | grep [port]</code></li>
+            <li>Kill process using port: <code>kill [PID]</code></li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Database Connection Errors</h3>
+          <p><strong>Problem:</strong> Cannot connect to PostgreSQL from scripts or Metabase.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li>Wait for database initialization (30-60 seconds)</li>
+            <li>Verify credentials in <code>.env</code> file</li>
+            <li>Check service health: <code>docker compose ps</code></li>
+            <li>Use <code>postgres</code> as hostname (not localhost) from containers</li>
+            <li>Restart PostgreSQL: <code>docker compose restart analytics-db</code></li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>dbt Command Not Found</h3>
+          <p><strong>Problem:</strong> <code>dbt</code> command fails or is not recognized.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li>Install dbt: <code>pip install dbt-postgres</code></li>
+            <li>Use Python virtual environment: <code>python -m venv venv</code></li>
+            <li>Activate virtualenv: <code>source venv/bin/activate</code></li>
+            <li>Alternative: Run dbt in Docker container</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>MinIO Access Denied</h3>
+          <p><strong>Problem:</strong> Cannot write to MinIO or access denied errors.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li>Verify MinIO credentials in <code>.env</code></li>
+            <li>Check bucket exists: <code>weather-data</code></li>
+            <li>Create bucket via MinIO console (localhost:9001)</li>
+            <li>Ensure access keys match in scripts and .env</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Airflow Tasks Failing</h3>
+          <p><strong>Problem:</strong> DAG tasks fail or show errors in Airflow UI.</p>
+          <p><strong>Solutions:</strong></p>
+          <ul>
+            <li>Check task logs in Airflow UI</li>
+            <li>Verify all services are running</li>
+            <li>Test scripts manually outside Airflow</li>
+            <li>Clear failed task and retry</li>
+            <li>Check for API rate limiting or network issues</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commands Reference -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Commands Reference</h2>
+      <p class="section-subtitle">Useful Docker and service commands</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Docker Compose</h3>
+          <div class="code-block">
+            <pre><code># Start all services
+docker compose up -d
+
+# Stop all services
+docker compose down
+
+# View logs
+docker compose logs -f [service]
+
+# Restart a service
+docker compose restart [service]
+
+# Check status
+docker compose ps
+
+# Remove volumes (data)
+docker compose down -v</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Database Access</h3>
+          <div class="code-block">
+            <pre><code># Connect to PostgreSQL
+docker compose exec analytics-db psql -U analytics
+
+# Run SQL query
+docker compose exec analytics-db psql -U analytics -d analytics -c "SELECT * FROM mart.fct_city_day LIMIT 5;"
+
+# Backup database
+docker compose exec analytics-db pg_dump -U analytics > backup.sql
+
+# Restore database
+docker compose exec -T analytics-db psql -U analytics < backup.sql</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>dbt Commands</h3>
+          <div class="code-block">
+            <pre><code># Run all models
+dbt run
+
+# Run specific model
+dbt run --select fct_city_day
+
+# Run tests
+dbt test
+
+# Generate docs
+dbt docs generate
+dbt docs serve
+
+# Debug connection
+dbt debug</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Logs & Monitoring</h3>
+          <div class="code-block">
+            <pre><code># Follow all logs
+docker compose logs -f
+
+# Specific service logs
+docker compose logs -f airflow-scheduler
+
+# Last 100 lines
+docker compose logs --tail=100
+
+# Export logs to file
+docker compose logs > pipeline-logs.txt</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Next Steps -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Next Steps</h2>
+      <p class="section-subtitle">After successful deployment</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Explore Dashboards</h3>
+          <p>Create custom visualizations in Metabase. Experiment with different chart types, filters, and aggregations to gain insights from the weather data.</p>
+          <a href="dashboard.html" style="color: var(--accent-primary); text-decoration: none;">View Dashboard Guide →</a>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>Customize Pipeline</h3>
+          <p>Add more cities, change update frequency, or extend data model. The modular architecture makes customization straightforward.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h3>Add More Tests</h3>
+          <p>Extend dbt tests and Great Expectations validations. Implement additional quality checks for your specific requirements.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Deploy to Cloud</h3>
+          <p>Adapt the pipeline for cloud deployment on AWS, GCP, or Azure. Use managed services for PostgreSQL, object storage, and orchestration.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title">Need Help?</h2>
+      <p class="section-subtitle">Additional resources and support</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="https://github.com/a-chmielewski/endtoend-etl-openmeteo/issues" target="_blank" class="btn btn-primary">Report Issue</a>
+        <a href="index.html" class="btn btn-secondary">Back to Overview</a>
+        <a href="dashboard.html" class="btn btn-secondary">View Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

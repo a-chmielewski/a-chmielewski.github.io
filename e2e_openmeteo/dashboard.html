@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Analytics Dashboard - OpenMeteo ETL Pipeline</title>
+  <meta name="description" content="Interactive Metabase dashboard for weather analytics with multi-city comparisons, time-series visualization, and filtering capabilities.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/e2e-style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">OpenMeteo Weather ETL Pipeline</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero">
+    <div class="hero-container">
+      <div class="hero-badge">Interactive Analytics</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Weather Analytics Dashboard</span>
+      </h1>
+      <p class="hero-subtitle">
+        Interactive Metabase dashboard providing self-service analytics for exploring weather patterns across multiple European cities. Built on dbt-transformed dimensional models with real-time insights, filtering, and drill-down capabilities.
+      </p>
+      <div class="hero-cta">
+        <a href="index.html" class="btn btn-secondary">← Back to Overview</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Preview -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Dashboard Preview</h2>
+      <p class="section-subtitle">Interactive weather analytics with time-series visualization</p>
+      
+      <img src="assets/dashboard.png" alt="Weather Analytics Dashboard" class="dashboard-image">
+      
+      <div class="info-box">
+        <p><strong>Live Dashboard:</strong> The Metabase dashboard provides real-time access to weather data with automatic refreshes. Users can filter by date range and city to focus on specific time periods or locations. Results update instantly based on user selections.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Key Features</h2>
+      <p class="section-subtitle">Powerful analytics capabilities for weather data exploration</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>Time-Series Visualization</h3>
+          <p>Track temperature trends over time with line charts showing min, max, and average daily temperatures for each city. Identify patterns and seasonal variations at a glance.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Interactive Filters</h3>
+          <p>Filter by date range and city to focus on specific time periods or locations. Results update instantly, enabling rapid exploration and ad-hoc analysis.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h3>Multi-City Comparison</h3>
+          <p>Compare weather patterns across Warsaw, Berlin, Paris, and London simultaneously on a single view. Analyze regional differences and correlations.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Detailed Data Table</h3>
+          <p>Access granular daily statistics with sortable columns for deeper analysis and data validation. Export data for external processing when needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Implementation -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Technical Implementation</h2>
+      <p class="section-subtitle">Built on optimized dimensional models for fast query performance</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Data Source</h3>
+          <p><strong>Dimensional Model:</strong> fct_city_day</p>
+          <p>The dashboard queries the `fct_city_day` dimensional model created by dbt, which aggregates hourly weather data into daily summaries.</p>
+          <div class="code-block">
+            <pre><code>-- Simplified view of underlying data
+SELECT 
+    city,
+    date,
+    temperature_avg,
+    temperature_min,
+    temperature_max,
+    precipitation_sum,
+    wind_speed_max
+FROM analytics.fct_city_day
+WHERE date >= CURRENT_DATE - INTERVAL '30 days'
+ORDER BY date DESC, city;</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Performance Optimization</h3>
+          <p><strong>Query Performance Strategies</strong></p>
+          <ul>
+            <li><strong>Pre-aggregated data:</strong> Daily aggregations computed once by dbt, not on every query</li>
+            <li><strong>Indexed columns:</strong> Database indexes on `city` and `date` for fast filtering</li>
+            <li><strong>Materialized tables:</strong> dbt materializes marts as tables, not views</li>
+            <li><strong>Query caching:</strong> Metabase caches results for improved response times</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics & Configuration -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Dashboard Configuration</h2>
+      <p class="section-subtitle">Metrics, filters, and customization options</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Metrics Displayed</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Calculation</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Avg Temperature</strong></td>
+                <td>AVG(temperature_2m)</td>
+                <td>Central tendency of daily temps</td>
+              </tr>
+              <tr>
+                <td><strong>Min Temperature</strong></td>
+                <td>MIN(temperature_2m)</td>
+                <td>Daily low for cold analysis</td>
+              </tr>
+              <tr>
+                <td><strong>Max Temperature</strong></td>
+                <td>MAX(temperature_2m)</td>
+                <td>Daily high for heat analysis</td>
+              </tr>
+              <tr>
+                <td><strong>Total Precipitation</strong></td>
+                <td>SUM(precipitation)</td>
+                <td>Daily rainfall accumulation</td>
+              </tr>
+              <tr>
+                <td><strong>Max Wind Speed</strong></td>
+                <td>MAX(wind_speed_10m)</td>
+                <td>Peak wind conditions</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="feature-card">
+          <h3>Filter Options</h3>
+          <ul>
+            <li><strong>Date Range:</strong> Select custom start and end dates for analysis period</li>
+            <li><strong>City:</strong> Choose one or more cities (Warsaw, Berlin, Paris, London)</li>
+            <li><strong>Time Granularity:</strong> Daily aggregations (can be extended to hourly)</li>
+            <li><strong>Metric Selection:</strong> Toggle individual metrics on/off for cleaner views</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup Instructions -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Setting Up the Dashboard</h2>
+      <p class="section-subtitle">Step-by-step guide to accessing and customizing the dashboard</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>1. Access Metabase</h3>
+          <p>Navigate to <a href="http://localhost:3000" target="_blank" style="color: var(--accent-primary);">http://localhost:3000</a> after running the Docker stack.</p>
+          <p>Default credentials are configured in your environment variables.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>2. Connect to Database</h3>
+          <p><strong>PostgreSQL Connection Settings:</strong></p>
+          <div class="code-block">
+            <pre><code>Host: postgres
+Port: 5432
+Database: analytics
+Username: analytics
+Password: &lt;your_password&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>3. Create Visualizations</h3>
+          <p><strong>Dashboard Creation Steps:</strong></p>
+          <ol>
+            <li>Click <strong>New</strong> → <strong>Question</strong></li>
+            <li>Select the <code>fct_city_day</code> table</li>
+            <li>Choose visualization type (line chart, table, etc.)</li>
+            <li>Add filters for interactivity</li>
+            <li>Save to dashboard</li>
+          </ol>
+        </div>
+
+        <div class="feature-card">
+          <h3>4. Share & Embed</h3>
+          <p><strong>Metabase Sharing Features:</strong></p>
+          <ul>
+            <li><strong>Public links</strong> for sharing outside the platform</li>
+            <li><strong>Embedded dashboards</strong> in web applications</li>
+            <li><strong>Scheduled email reports</strong> for stakeholders</li>
+            <li><strong>Slack/Teams integration</strong> for alerts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Potential Extensions -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Potential Extensions</h2>
+      <p class="section-subtitle">Ideas for enhancing the dashboard capabilities</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🚨</div>
+          <h3>Anomaly Detection</h3>
+          <p>Add alerts for temperature extremes or unusual patterns using Metabase's alerting features. Set thresholds and receive notifications when conditions exceed normal ranges.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔮</div>
+          <h3>Forecasting Models</h3>
+          <p>Integrate ML predictions alongside historical data for predictive analytics. Display forecasted temperatures and precipitation probabilities.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Additional Cities</h3>
+          <p>Extend coverage to more European or global cities by updating the ingestion pipeline configuration. Simple configuration change to add new locations.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Hourly Granularity</h3>
+          <p>Create hourly dashboards for intraday analysis using the staging tables directly. Useful for analyzing daily temperature patterns and hourly variations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="content-section">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title">Ready to Build Your Own?</h2>
+      <p class="section-subtitle">Follow the setup guide to deploy the full pipeline</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="how-to-run.html" class="btn btn-primary">Setup Guide</a>
+        <a href="index.html" class="btn btn-secondary">Back to Overview</a>
+        <a href="https://github.com/a-chmielewski/endtoend-etl-openmeteo" target="_blank" class="btn btn-secondary">GitHub Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

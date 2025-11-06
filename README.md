@@ -7,7 +7,7 @@
     <h3>OpenMeteo ETL Pipeline</h3>
     <p>End-to-end data pipeline featuring API ingestion, data quality checks with Great Expectations, dbt transformations, and interactive Metabase dashboards. Orchestrated with Apache Airflow for automated hourly updates.</p>
     <p><strong>Stack:</strong> Python • PostgreSQL • dbt • Airflow • Metabase • Great Expectations</p>
-    <a href="https://a-chmielewski.github.io/endtoend-etl-openmeteo/" class="project-link" target="_blank">View Project →</a>
+    <a href="e2e_openmeteo/index.html" class="project-link">View Project →</a>
   </div>
 
   <div class="project-card">
