@@ -1,4 +1,4 @@
-## Data Engineering Projects
+<h2 style="font-size: 2.5rem; margin-top: 3rem; margin-bottom: 2rem; font-weight: 700;">Data Engineering Projects</h2>
 
 <div class="projects-grid">
   
@@ -38,12 +38,12 @@
     <span class="project-category">Coming Soon</span>
     <h3>More Projects in Development</h3>
     <p>Additional data engineering and data science projects are currently in development and will be added to this portfolio soon.</p>
-    <p><strong>Focus Areas:</strong> Cloud architecture • ML pipelines • Data lakes</p>
+    <p><strong>Focus Areas:</strong> Data Quality • Data Testing • Batch vs Streaming pipelines</p>
   </div>
 
 </div>
 
-## Data Science Projects
+<h2 style="font-size: 2.5rem; margin-top: 5rem; margin-bottom: 2rem; font-weight: 700;">Data Science Projects</h2>
 
 <div class="projects-grid">
   
@@ -51,7 +51,7 @@
     <span class="project-category">Data Science</span>
     <h3>Coming Soon</h3>
     <p>Data science projects including machine learning models, exploratory data analysis, and predictive analytics will be featured here.</p>
-    <p><strong>Focus Areas:</strong> ML/AI • Predictive Analytics • Data Visualization</p>
+    <p><strong>Focus Areas:</strong> ML • Predictive Analytics • Data Visualization</p>
   </div>
 
 </div>
