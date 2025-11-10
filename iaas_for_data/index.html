@@ -94,84 +94,47 @@
       <h2 class="section-title">Architecture Overview</h2>
       <p class="section-subtitle">Serverless data pipeline following cloud-native best practices</p>
       
-      <div class="architecture-flow">
-        <div class="flow-step">
-          <div class="flow-step-header">
-            <span class="flow-step-icon">🌐</span>
-            <h3 class="flow-step-title">ECB API</h3>
-          </div>
-          <p class="flow-step-description">European Central Bank public API providing daily foreign exchange rates</p>
-          <ul class="flow-step-features">
-            <li>CSV format</li>
-            <li>90-day history</li>
-            <li>Free access</li>
-          </ul>
+      <div class="architecture-grid">
+        <div class="architecture-card">
+          <div class="architecture-card-number">1</div>
+          <h3>🌐 ECB API</h3>
+          <p><strong>Data Source</strong></p>
+          <p style="margin-top: 0.5rem;">European Central Bank public API providing daily foreign exchange rates in CSV format with 90-day history.</p>
         </div>
 
-        <div class="flow-step">
-          <div class="flow-step-header">
-            <span class="flow-step-icon">🐳</span>
-            <h3 class="flow-step-title">Cloud Run Service</h3>
-          </div>
-          <p class="flow-step-description">Containerized Python/Flask application handling data ingestion and transformation</p>
-          <ul class="flow-step-features">
-            <li>HTTP endpoint</li>
-            <li>Scale to zero</li>
-            <li>1 vCPU, 1GB RAM</li>
-            <li>60s timeout</li>
-          </ul>
+        <div class="architecture-card">
+          <div class="architecture-card-number">2</div>
+          <h3>🐳 Cloud Run Service</h3>
+          <p><strong>Containerized Compute</strong></p>
+          <p style="margin-top: 0.5rem;">Containerized Python/Flask application handling data ingestion and transformation with scale-to-zero capabilities.</p>
         </div>
 
-        <div class="flow-step">
-          <div class="flow-step-header">
-            <span class="flow-step-icon">⏰</span>
-            <h3 class="flow-step-title">Cloud Scheduler</h3>
-          </div>
-          <p class="flow-step-description">Managed cron service triggering daily pipeline execution</p>
-          <ul class="flow-step-features">
-            <li>Daily at 3 AM UTC</li>
-            <li>Retry logic</li>
-            <li>HTTP POST trigger</li>
-          </ul>
+        <div class="architecture-card">
+          <div class="architecture-card-number">3</div>
+          <h3>⏰ Cloud Scheduler</h3>
+          <p><strong>Orchestration</strong></p>
+          <p style="margin-top: 0.5rem;">Managed cron service triggering daily pipeline execution at 3 AM UTC with automatic retry logic.</p>
         </div>
 
-        <div class="flow-step">
-          <div class="flow-step-header">
-            <span class="flow-step-icon">🗄️</span>
-            <h3 class="flow-step-title">Cloud Storage</h3>
-          </div>
-          <p class="flow-step-description">Raw data archive with lifecycle management for audit trail</p>
-          <ul class="flow-step-features">
-            <li>30-day retention</li>
-            <li>Automatic deletion</li>
-            <li>Audit trail</li>
-          </ul>
+        <div class="architecture-card">
+          <div class="architecture-card-number">4</div>
+          <h3>🗄️ Cloud Storage</h3>
+          <p><strong>Raw Archive</strong></p>
+          <p style="margin-top: 0.5rem;">Raw data archive with 30-day lifecycle management for audit trail and data replay capabilities.</p>
         </div>
 
-        <div class="flow-step">
-          <div class="flow-step-header">
-            <span class="flow-step-icon">🔄</span>
-            <h3 class="flow-step-title">Data Transformation</h3>
-          </div>
-          <p class="flow-step-description">Pandas-based ETL converting wide-format CSV to normalized long format</p>
-          <ul class="flow-step-features">
-            <li>Wide to long</li>
-            <li>Type casting</li>
-            <li>Validation</li>
-          </ul>
+        <div class="architecture-card">
+          <div class="architecture-card-number">5</div>
+          <h3>🔄 Data Transformation</h3>
+          <p><strong>ETL Processing</strong></p>
+          <p style="margin-top: 0.5rem;">Pandas-based ETL converting wide-format CSV to normalized long format with type casting and validation.</p>
         </div>
 
-        <div class="flow-step">
-          <div class="flow-step-header">
-            <span class="flow-step-icon">📊</span>
-            <h3 class="flow-step-title">BigQuery</h3>
-          </div>
-          <p class="flow-step-description">Serverless data warehouse with partitioned tables for analytics</p>
-          <ul class="flow-step-features">
-            <li>Partitioned by date</li>
-            <li>Deduplication</li>
-            <li>SQL analytics</li>
-          </ul>
+        <div class="architecture-card">
+          <div class="architecture-card-number">6</div>
+          <h3>📊 BigQuery</h3>
+          <p><strong>Data Warehouse</strong></p>
+          <p style="margin-top: 0.5rem;">Serverless data warehouse with day-partitioned tables optimized for analytics and SQL queries.</p>
         </div>
       </div>
 
