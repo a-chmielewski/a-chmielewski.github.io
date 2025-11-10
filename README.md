@@ -27,10 +27,11 @@
   </div>
 
   <div class="project-card">
-    <span class="project-category">Coming Soon</span>
-    <h3>More Projects in Development</h3>
-    <p>Additional data engineering and data science projects are currently in development and will be added to this portfolio soon.</p>
-    <p><strong>Focus Areas:</strong> Cloud architecture • ML pipelines • Data lakes</p>
+    <span class="project-category">Data Engineering</span>
+    <h3>Infrastructure as a Service for Data</h3>
+    <p>Production-ready cloud infrastructure demonstrating infrastructure as code with Terraform, serverless architecture on GCP, and automated CI/CD pipelines. Features daily FX rate ingestion with Cloud Run, Cloud Scheduler orchestration, and BigQuery analytics—all for ~$0.32/month.</p>
+    <p><strong>Stack:</strong> Terraform • GCP • Cloud Run • BigQuery • Cloud Scheduler • GitHub Actions</p>
+    <a href="iaas_for_data/index.html" class="project-link">View Project →</a>
   </div>
 
 </div>

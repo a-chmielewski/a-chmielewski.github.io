@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Stack - IaaS for Data Engineering</title>
+  <meta name="description" content="Detailed breakdown of technologies, tools, and frameworks used in the cloud infrastructure project.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">IaaS for Data Engineering</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link">Architecture</a>
+        <a href="tech-stack.html" class="project-nav-link" style="color: var(--accent-primary);">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Technology Overview</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Technology Stack</span>
+      </h1>
+      <p class="hero-subtitle">
+        A comprehensive look at the technologies, tools, and frameworks that power this production-ready cloud infrastructure and data pipeline.
+      </p>
+    </div>
+  </section>
+
+  <!-- Core Infrastructure Technologies -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Core Infrastructure Technologies</h2>
+      <p class="section-subtitle">The foundation of infrastructure as code and cloud-native architecture</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🏗️ Terraform 1.7+</h3>
+        <p><strong>Role:</strong> Infrastructure as Code (IaC) tool</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Industry standard for multi-cloud infrastructure management</li>
+          <li>Declarative syntax for defining desired state</li>
+          <li>Strong GCP provider with comprehensive resource support</li>
+          <li>State management for tracking infrastructure changes</li>
+          <li>Plan preview before applying changes (safety)</li>
+          <li>Module system for code reusability</li>
+        </ul>
+        <p><strong>Key features used:</strong></p>
+        <ul>
+          <li>GCP provider for resource provisioning</li>
+          <li>Resource dependencies and lifecycle management</li>
+          <li>Variables for environment configuration</li>
+          <li>Outputs for exposing resource attributes</li>
+          <li>Integration with GitHub Actions CI/CD</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>☁️ Google Cloud Platform</h3>
+        <p><strong>Role:</strong> Cloud infrastructure provider</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Best-in-class serverless offerings (Cloud Run, BigQuery)</li>
+          <li>Strong data analytics capabilities with BigQuery</li>
+          <li>Excellent free tier for development and small workloads</li>
+          <li>Robust IAM and security features</li>
+          <li>Workload Identity Federation for secure CI/CD</li>
+          <li>Integrated monitoring and logging</li>
+        </ul>
+        <p><strong>Services utilized:</strong></p>
+        <ul>
+          <li><strong>Cloud Run:</strong> Serverless container platform</li>
+          <li><strong>Cloud Scheduler:</strong> Managed cron service</li>
+          <li><strong>BigQuery:</strong> Serverless data warehouse</li>
+          <li><strong>Cloud Storage:</strong> Object storage</li>
+          <li><strong>IAM:</strong> Identity and access management</li>
+          <li><strong>Cloud Logging:</strong> Centralized logging</li>
+          <li><strong>Artifact Registry:</strong> Container image storage</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>🐍 Python 3.11+</h3>
+        <p><strong>Role:</strong> Application programming language</p>
+        <p><strong>Why chosen:</strong></p>
+        <ul>
+          <li>Excellent libraries for data processing (pandas)</li>
+          <li>Strong GCP client library support</li>
+          <li>Flask for lightweight HTTP APIs</li>
+          <li>Easy integration with BigQuery</li>
+          <li>Widely used in data engineering</li>
+          <li>Clear, readable syntax</li>
+        </ul>
+        <p><strong>Key libraries:</strong></p>
+        <ul>
+          <li><code>flask</code> - Web framework for HTTP endpoints</li>
+          <li><code>pandas</code> - Data manipulation and transformation</li>
+          <li><code>google-cloud-bigquery</code> - BigQuery client</li>
+          <li><code>google-cloud-storage</code> - Cloud Storage client</li>
+          <li><code>requests</code> - HTTP library for API calls</li>
+          <li><code>gunicorn</code> - Production WSGI server</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Source & Processing -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Data Source & Processing</h2>
+      <p class="section-subtitle">Where the data comes from and how it's processed</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🌐 European Central Bank API</h3>
+        <p><strong>Endpoint:</strong> <code>https://data-api.ecb.europa.eu/service/data/EXR/</code></p>
+        <p><strong>What it provides:</strong></p>
+        <ul>
+          <li>Daily foreign exchange rates for 40+ currencies</li>
+          <li>90-day historical data window</li>
+          <li>CSV format with wide structure (currencies as columns)</li>
+          <li>Free tier with no authentication required</li>
+          <li>Reliable public API maintained by ECB</li>
+          <li>Updated daily after market close</li>
+        </ul>
+        <p><strong>Data format:</strong></p>
+        <div class="code-block">
+          <pre><code>Date,USD,GBP,JPY,CHF,...
+2025-01-01,1.0435,0.8756,157.23,0.9234,...
+2025-01-02,1.0389,0.8801,156.87,0.9298,...</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>🔄 Pandas Data Transformation</h3>
+        <p><strong>Role:</strong> Wide-to-long format conversion</p>
+        <p><strong>Transformation logic:</strong></p>
+        <div class="code-block">
+          <pre><code># Wide format (CSV from API)
+Date       | USD    | GBP    | JPY
+2025-01-01 | 1.0435 | 0.8756 | 157.23
+
+# Long format (loaded to BigQuery)
+date       | currency | rate   | ingestion_date
+2025-01-01 | USD      | 1.0435 | 2025-01-10
+2025-01-01 | GBP      | 0.8756 | 2025-01-10
+2025-01-01 | JPY      | 157.23 | 2025-01-10</code></pre>
+        </div>
+        <p><strong>Processing steps:</strong></p>
+        <ul>
+          <li>Read CSV with <code>pd.read_csv()</code></li>
+          <li>Melt wide format to long format with <code>pd.melt()</code></li>
+          <li>Add ingestion timestamp column</li>
+          <li>Type casting and validation</li>
+          <li>Handle missing values</li>
+          <li>Export to BigQuery-compatible format</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CI/CD Pipeline -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">CI/CD Pipeline</h2>
+      <p class="section-subtitle">Automated testing, building, and deployment</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🔄 GitHub Actions</h3>
+        <p><strong>Role:</strong> Continuous Integration and Deployment</p>
+        <p><strong>Workflow stages:</strong></p>
+        <ul>
+          <li><strong>Checkout:</strong> Clone repository code</li>
+          <li><strong>Setup:</strong> Install Terraform CLI v1.7.5</li>
+          <li><strong>Authenticate:</strong> OIDC-based GCP authentication</li>
+          <li><strong>Build:</strong> Docker image build and push to Artifact Registry</li>
+          <li><strong>Test:</strong> Terraform fmt, validate, and plan</li>
+          <li><strong>Deploy:</strong> Terraform apply on main branch</li>
+        </ul>
+        <p><strong>Triggers:</strong></p>
+        <ul>
+          <li>Push to main branch (automatic deployment)</li>
+          <li>Pull requests (validation only, no deployment)</li>
+          <li>Manual workflow dispatch for testing</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>🔐 Workload Identity Federation</h3>
+        <p><strong>Role:</strong> Keyless authentication for GitHub Actions</p>
+        <p><strong>How it works:</strong></p>
+        <ul>
+          <li>GitHub Actions gets OIDC token from GitHub</li>
+          <li>Token exchanged for short-lived GCP credentials</li>
+          <li>No service account keys stored in GitHub Secrets</li>
+          <li>Automatic token rotation (expires in 1 hour)</li>
+          <li>Can restrict by repository, branch, or environment</li>
+          <li>Full audit trail in GCP Cloud Logging</li>
+        </ul>
+        <p><strong>Configuration:</strong></p>
+        <div class="code-block">
+          <pre><code># GitHub Actions workflow
+- name: Authenticate to Google Cloud
+  uses: google-github-actions/auth@v2
+  with:
+    workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+    service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+    token_format: 'access_token'</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>🐳 Docker</h3>
+        <p><strong>Role:</strong> Application containerization</p>
+        <p><strong>Dockerfile highlights:</strong></p>
+        <div class="code-block">
+          <pre><code>FROM python:3.11-slim
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY app/ /app
+WORKDIR /app
+
+# Run as non-root user (security)
+USER nobody
+
+# Expose port and start server
+ENV PORT 8080
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 2 main:app</code></pre>
+        </div>
+        <p><strong>Build process:</strong></p>
+        <ul>
+          <li>Multi-stage build for smaller images</li>
+          <li>Layer caching for faster builds</li>
+          <li>Security scanning with Trivy (optional)</li>
+          <li>Tagged with git SHA for traceability</li>
+          <li>Pushed to GCP Artifact Registry</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & IAM -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Security & IAM</h2>
+      <p class="section-subtitle">Security best practices and access control</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Service Accounts</h3>
+          <p><strong>ingest-runner@:</strong></p>
+          <ul>
+            <li>Used by Cloud Run service</li>
+            <li>bigquery.jobUser (create jobs)</li>
+            <li>bigquery.dataEditor (write data)</li>
+            <li>storage.objectAdmin (write files)</li>
+          </ul>
+          <p style="margin-top: 1rem;"><strong>scheduler-invoker@:</strong></p>
+          <ul>
+            <li>Used by Cloud Scheduler</li>
+            <li>run.invoker (trigger Cloud Run)</li>
+            <li>Minimal permissions (principle of least privilege)</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Least-Privilege Access</h3>
+          <p><strong>Design principles:</strong></p>
+          <ul>
+            <li>Separate service accounts for each component</li>
+            <li>Minimum permissions required for function</li>
+            <li>No user credentials used for services</li>
+            <li>IAM roles granted at resource level</li>
+            <li>Regular permission audits possible</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>No Secrets in Code</h3>
+          <p><strong>Security practices:</strong></p>
+          <ul>
+            <li>No API keys hardcoded</li>
+            <li>No service account keys stored</li>
+            <li>Environment variables for configuration</li>
+            <li>OIDC for CI/CD authentication</li>
+            <li>Application Default Credentials</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Audit Logging</h3>
+          <p><strong>Monitoring:</strong></p>
+          <ul>
+            <li>All API calls logged to Cloud Logging</li>
+            <li>Service account activity tracked</li>
+            <li>Infrastructure changes auditable</li>
+            <li>Query logs in BigQuery</li>
+            <li>Can export logs for SIEM integration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cost Optimization -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Cost Optimization Features</h2>
+      <p class="section-subtitle">Design choices that keep costs minimal</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Serverless Compute</h3>
+          <ul>
+            <li><strong>Scale to Zero:</strong> Cloud Run charges only during execution</li>
+            <li><strong>Execution Time:</strong> ~30 seconds per day = $0.00</li>
+            <li><strong>Memory:</strong> 1GB sufficient for workload</li>
+            <li><strong>CPU:</strong> 1 vCPU for moderate performance</li>
+            <li><strong>Free Tier:</strong> 2M requests/month free</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Lifecycle Policies</h3>
+          <ul>
+            <li><strong>Cloud Storage:</strong> Auto-delete after 30 days</li>
+            <li><strong>Rationale:</strong> Raw CSVs not needed long-term</li>
+            <li><strong>Data:</strong> Already loaded to BigQuery</li>
+            <li><strong>Compliance:</strong> 30-day audit trail sufficient</li>
+            <li><strong>Cost:</strong> Caps storage at ~1 GB maximum</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>BigQuery Partitioning</h3>
+          <ul>
+            <li><strong>Partitioning:</strong> By ingestion_date (day granularity)</li>
+            <li><strong>Query Pruning:</strong> Scans only relevant partitions</li>
+            <li><strong>Cost Impact:</strong> Reduces data scanned per query</li>
+            <li><strong>Example:</strong> "Latest data" query scans 1 day vs all data</li>
+            <li><strong>Savings:</strong> 90x reduction in query costs</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Resource Right-Sizing</h3>
+          <ul>
+            <li><strong>Cloud Run:</strong> 1 vCPU, 1GB RAM (not over-provisioned)</li>
+            <li><strong>Timeout:</strong> 60s (prevents runaway processes)</li>
+            <li><strong>Concurrency:</strong> 1 request/instance (simple workload)</li>
+            <li><strong>Scheduler:</strong> 1 job only (minimal job count)</li>
+            <li><strong>BigQuery:</strong> On-demand pricing (no slots reserved)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Total Monthly Cost Breakdown:</strong> Cloud Run: $0.00 | Scheduler: $0.10 | Storage: $0.02 | BigQuery: $0.20 | <strong>Total: ~$0.32/month</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monitoring Capabilities -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Monitoring & Observability</h2>
+      <p class="section-subtitle">Built-in monitoring and logging capabilities</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Cloud Logging</h3>
+          <p><strong>Centralized logs:</strong></p>
+          <ul>
+            <li>Cloud Run application logs</li>
+            <li>Cloud Scheduler execution logs</li>
+            <li>BigQuery job logs</li>
+            <li>IAM and audit logs</li>
+            <li>Queryable with filters</li>
+            <li>Can export to BigQuery for analysis</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Cloud Monitoring</h3>
+          <p><strong>Metrics available:</strong></p>
+          <ul>
+            <li>Cloud Run request count</li>
+            <li>Cloud Run latency (p50, p95, p99)</li>
+            <li>Cloud Run instance count</li>
+            <li>Scheduler job success/failure rate</li>
+            <li>BigQuery bytes processed</li>
+            <li>Can create custom dashboards</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Alerting (Optional)</h3>
+          <p><strong>Can be configured:</strong></p>
+          <ul>
+            <li>Cloud Run error rate > threshold</li>
+            <li>Scheduler job failures</li>
+            <li>BigQuery query costs spike</li>
+            <li>Cloud Storage bucket size limit</li>
+            <li>Email or Slack notifications</li>
+            <li>Integration with PagerDuty/Opsgenie</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Data Quality Checks</h3>
+          <p><strong>Application-level:</strong></p>
+          <ul>
+            <li>Row count validation after load</li>
+            <li>Data freshness checks (last ingestion date)</li>
+            <li>Schema validation on transform</li>
+            <li>Duplicate detection in BigQuery</li>
+            <li>API response validation</li>
+            <li>Error handling and logging</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block" style="margin-top: 2rem;">
+        <pre><code># Query Cloud Logging for errors
+gcloud logging read \
+  "resource.type=cloud_run_revision AND severity>=ERROR" \
+  --limit=50 \
+  --format=json
+
+# Check BigQuery data freshness
+SELECT 
+  MAX(ingestion_date) as last_ingestion,
+  DATE_DIFF(CURRENT_DATE(), MAX(ingestion_date), DAY) as days_old
+FROM `analytics.raw_fx_rates`;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Version Compatibility -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Version Compatibility</h2>
+      <p class="section-subtitle">Tested versions and dependencies</p>
+      
+      <div class="tech-stack-grid">
+        <div class="tech-item">
+          <h4>Terraform</h4>
+          <p><strong>Version:</strong> 1.7.5<br>
+          <strong>Provider:</strong> google v5.x</p>
+        </div>
+        <div class="tech-item">
+          <h4>Python</h4>
+          <p><strong>Version:</strong> 3.11+<br>
+          <strong>Tested:</strong> 3.11, 3.12</p>
+        </div>
+        <div class="tech-item">
+          <h4>Flask</h4>
+          <p><strong>Version:</strong> 3.0+<br>
+          <strong>WSGI:</strong> Gunicorn 21.2+</p>
+        </div>
+        <div class="tech-item">
+          <h4>Pandas</h4>
+          <p><strong>Version:</strong> 2.2+<br>
+          <strong>NumPy:</strong> 1.26+</p>
+        </div>
+        <div class="tech-item">
+          <h4>GCP SDK</h4>
+          <p><strong>BigQuery:</strong> 3.17+<br>
+          <strong>Storage:</strong> 2.14+</p>
+        </div>
+        <div class="tech-item">
+          <h4>Docker</h4>
+          <p><strong>Version:</strong> 24.0+<br>
+          <strong>Compose:</strong> v2.x</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Dependency Management:</strong> All Python dependencies pinned in requirements.txt with exact versions for reproducible builds. Terraform provider versions constrained to prevent breaking changes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section" style="background: var(--bg-secondary); text-align: center;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Ready to Deploy?</h2>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="how-to-run.html" class="btn btn-primary">Setup Instructions</a>
+        <a href="architecture.html" class="btn btn-secondary">View Architecture</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

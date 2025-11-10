@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Run - IaaS for Data Engineering</title>
+  <meta name="description" content="Complete setup and deployment guide for the cloud infrastructure project.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">IaaS for Data Engineering</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link">Architecture</a>
+        <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link" style="color: var(--accent-primary);">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Setup Guide</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">How to Run</span>
+      </h1>
+      <p class="hero-subtitle">
+        Complete step-by-step guide to deploy this infrastructure to your own Google Cloud Platform account using Terraform.
+      </p>
+    </div>
+  </section>
+
+  <!-- Prerequisites -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Prerequisites</h2>
+      <p class="section-subtitle">What you need before getting started</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>1. Google Cloud Account</h3>
+          <ul>
+            <li>Active GCP account with billing enabled</li>
+            <li>$300 free credit for new accounts</li>
+            <li>Project with billing linked</li>
+            <li>Owner or Editor role on the project</li>
+          </ul>
+          <p style="margin-top: 1rem;"><a href="https://console.cloud.google.com" target="_blank">→ GCP Console</a></p>
+        </div>
+
+        <div class="feature-card">
+          <h3>2. Tools Installed</h3>
+          <ul>
+            <li><strong>Terraform:</strong> v1.7.5 or later</li>
+            <li><strong>gcloud CLI:</strong> Latest version</li>
+            <li><strong>Docker:</strong> For local testing (optional)</li>
+            <li><strong>Git:</strong> To clone the repository</li>
+          </ul>
+          <p style="margin-top: 1rem;"><a href="https://developer.hashicorp.com/terraform/install" target="_blank">→ Install Terraform</a></p>
+        </div>
+
+        <div class="feature-card">
+          <h3>3. GCP APIs Enabled</h3>
+          <ul>
+            <li>Cloud Run API</li>
+            <li>Cloud Scheduler API</li>
+            <li>BigQuery API</li>
+            <li>Cloud Storage API</li>
+            <li>IAM API</li>
+            <li>Artifact Registry API</li>
+          </ul>
+          <p style="margin-top: 1rem;"><em>Will be enabled automatically by Terraform</em></p>
+        </div>
+
+        <div class="feature-card">
+          <h3>4. Permissions Required</h3>
+          <ul>
+            <li>Create service accounts</li>
+            <li>Grant IAM roles</li>
+            <li>Deploy Cloud Run services</li>
+            <li>Create BigQuery datasets</li>
+            <li>Create storage buckets</li>
+            <li>Create Cloud Scheduler jobs</li>
+          </ul>
+          <p style="margin-top: 1rem;"><em>Requires Owner or Editor role</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Quick Start Guide</h2>
+      <p class="section-subtitle">Deploy the entire infrastructure in under 10 minutes</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 1: Clone the Repository</h3>
+        <div class="code-block">
+          <pre><code>git clone https://github.com/a-chmielewski/iaas-for-data.git
+cd iaas-for-data</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 2: Set Up GCP Project</h3>
+        <div class="code-block">
+          <pre><code># Set your project ID
+export GCP_PROJECT="your-project-id"
+export GCP_REGION="us-central1"
+
+# Authenticate with GCP
+gcloud auth login
+gcloud config set project $GCP_PROJECT
+
+# Enable required APIs (takes 2-3 minutes)
+gcloud services enable \
+  run.googleapis.com \
+  cloudscheduler.googleapis.com \
+  bigquery.googleapis.com \
+  storage.googleapis.com \
+  iam.googleapis.com \
+  artifactregistry.googleapis.com</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 3: Build and Push Docker Image</h3>
+        <div class="code-block">
+          <pre><code># Create Artifact Registry repository
+gcloud artifacts repositories create app-images \
+  --repository-format=docker \
+  --location=$GCP_REGION \
+  --description="Docker images for data pipelines"
+
+# Configure Docker authentication
+gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev
+
+# Build and push image
+docker build -t ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/app-images/ingest:latest app/
+docker push ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/app-images/ingest:latest</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 4: Configure Terraform Variables</h3>
+        <div class="code-block">
+          <pre><code># Navigate to infrastructure directory
+cd infra/
+
+# Create terraform.tfvars file (don't commit this!)
+cat > terraform.tfvars << EOF
+project_id = "${GCP_PROJECT}"
+region     = "${GCP_REGION}"
+EOF</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Step 5: Deploy with Terraform</h3>
+        <div class="code-block">
+          <pre><code># Initialize Terraform
+terraform init
+
+# Preview infrastructure changes
+terraform plan
+
+# Deploy infrastructure
+terraform apply
+
+# Type 'yes' when prompted to confirm</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>Deployment takes 3-5 minutes.</strong> Terraform will create:</p>
+        <ul>
+          <li>2 service accounts with IAM roles</li>
+          <li>Cloud Run service</li>
+          <li>Cloud Scheduler job</li>
+          <li>BigQuery dataset and table</li>
+          <li>Cloud Storage bucket</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>Step 6: Verify Deployment</h3>
+        <div class="code-block">
+          <pre><code># Check Cloud Run service
+gcloud run services describe ingest --region=$GCP_REGION
+
+# Check BigQuery dataset
+bq ls analytics
+
+# Check Cloud Scheduler job
+gcloud scheduler jobs describe daily-fx-ingest --location=$GCP_REGION</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Manual Testing -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Manual Testing</h2>
+      <p class="section-subtitle">Trigger the pipeline manually before waiting for scheduled execution</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Option 1: Trigger via Cloud Scheduler (Recommended)</h3>
+        <div class="code-block">
+          <pre><code># Manually trigger the scheduler job
+gcloud scheduler jobs run daily-fx-ingest --location=$GCP_REGION
+
+# View execution logs
+gcloud logging read \
+  "resource.type=cloud_run_revision AND resource.labels.service_name=ingest" \
+  --limit=20 \
+  --format=json</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">This tests the complete flow including scheduler authentication.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Option 2: Direct Cloud Run Invocation</h3>
+        <div class="code-block">
+          <pre><code># Get Cloud Run service URL
+SERVICE_URL=$(gcloud run services describe ingest \
+  --region=$GCP_REGION \
+  --format='value(status.url)')
+
+# Trigger with authentication
+curl -X POST $SERVICE_URL \
+  -H "Authorization: Bearer $(gcloud auth print-identity-token)"</code></pre>
+        </div>
+        <p style="margin-top: 1rem;">This directly invokes the Cloud Run service endpoint.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Verify Data in BigQuery</h3>
+        <div class="code-block">
+          <pre><code># Query loaded data
+bq query --use_legacy_sql=false '
+SELECT 
+  ingestion_date,
+  COUNT(*) as row_count,
+  COUNT(DISTINCT currency) as currency_count,
+  MIN(date) as earliest_date,
+  MAX(date) as latest_date
+FROM `analytics.raw_fx_rates`
+GROUP BY ingestion_date
+ORDER BY ingestion_date DESC
+LIMIT 5'
+
+# Check specific currencies
+bq query --use_legacy_sql=false '
+SELECT date, currency, rate
+FROM `analytics.raw_fx_rates`
+WHERE currency IN ("USD", "GBP", "JPY")
+  AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
+ORDER BY date DESC, currency
+LIMIT 10'</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monitoring -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Monitoring & Troubleshooting</h2>
+      <p class="section-subtitle">How to monitor the pipeline and debug issues</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>View Cloud Run Logs</h3>
+          <div class="code-block">
+            <pre><code># Recent logs
+gcloud logging read \
+  "resource.type=cloud_run_revision" \
+  --limit=50
+
+# Error logs only
+gcloud logging read \
+  "resource.type=cloud_run_revision AND severity>=ERROR" \
+  --limit=20</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>View Scheduler Logs</h3>
+          <div class="code-block">
+            <pre><code># Scheduler execution history
+gcloud logging read \
+  "resource.type=cloud_scheduler_job" \
+  --limit=20
+
+# Recent job attempts
+gcloud scheduler jobs describe \
+  daily-fx-ingest \
+  --location=$GCP_REGION</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Check BigQuery Jobs</h3>
+          <div class="code-block">
+            <pre><code># List recent BigQuery jobs
+bq ls -j -a -n 10
+
+# Get job details
+bq show -j [JOB_ID]
+
+# View load job errors
+bq show --format=prettyjson -j [JOB_ID]</code></pre>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>Cloud Storage Files</h3>
+          <div class="code-block">
+            <pre><code># List uploaded CSV files
+gsutil ls gs://[PROJECT_ID]-data-bucket/
+
+# Download specific file
+gsutil cp gs://[PROJECT_ID]-data-bucket/fx_rates_TIMESTAMP.csv .
+
+# View file content
+gsutil cat gs://[PROJECT_ID]-data-bucket/fx_rates_TIMESTAMP.csv | head -20</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Common Issues -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Common Issues & Solutions</h2>
+      <p class="section-subtitle">Troubleshooting guide for typical problems</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Issue: Terraform Apply Fails with Permission Denied</h3>
+        <p><strong>Cause:</strong> Insufficient IAM permissions on GCP project</p>
+        <p><strong>Solution:</strong></p>
+        <ul>
+          <li>Verify you have Owner or Editor role on the project</li>
+          <li>Check billing is enabled on the project</li>
+          <li>Ensure gcloud is authenticated: <code>gcloud auth application-default login</code></li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Issue: Cloud Run Service Returns 403 Forbidden</h3>
+        <p><strong>Cause:</strong> Service account lacks required permissions</p>
+        <p><strong>Solution:</strong></p>
+        <ul>
+          <li>Verify IAM roles in GCP Console → IAM & Admin</li>
+          <li>Check ingest-runner@ has bigquery.jobUser and dataEditor</li>
+          <li>Re-run terraform apply to fix IAM bindings</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Issue: No Data in BigQuery After Execution</h3>
+        <p><strong>Cause:</strong> Data transformation or load job failed</p>
+        <p><strong>Solution:</strong></p>
+        <ul>
+          <li>Check Cloud Run logs for errors: <code>gcloud logging read "resource.type=cloud_run_revision AND severity>=ERROR"</code></li>
+          <li>Verify ECB API is accessible (not rate limited)</li>
+          <li>Check BigQuery job history: <code>bq ls -j -a -n 10</code></li>
+          <li>Validate table schema matches expected format</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>Issue: Cloud Scheduler Job Not Triggering</h3>
+        <p><strong>Cause:</strong> Scheduler not enabled or misconfigured</p>
+        <p><strong>Solution:</strong></p>
+        <ul>
+          <li>Verify Cloud Scheduler API is enabled</li>
+          <li>Check job status: <code>gcloud scheduler jobs describe daily-fx-ingest --location=$GCP_REGION</code></li>
+          <li>Manually trigger to test: <code>gcloud scheduler jobs run daily-fx-ingest --location=$GCP_REGION</code></li>
+          <li>Check scheduler service account has run.invoker role</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Configuration Options -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Configuration Options</h2>
+      <p class="section-subtitle">Customize the deployment for your needs</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Terraform Variables</h3>
+        <p>Edit <code>infra/terraform.tfvars</code> to customize:</p>
+        <div class="code-block">
+          <pre><code># GCP project configuration
+project_id = "your-project-id"
+region     = "us-central1"  # Change to your preferred region
+
+# Resource naming (optional)
+service_name = "ingest"
+dataset_name = "analytics"
+table_name   = "raw_fx_rates"
+
+# Cloud Run configuration (optional)
+cloud_run_memory = "1Gi"
+cloud_run_cpu    = "1"
+cloud_run_timeout = 60  # seconds
+
+# Scheduler configuration (optional)
+schedule = "0 3 * * *"  # Daily at 3 AM UTC
+
+# Storage lifecycle (optional)
+storage_retention_days = 30</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <h3>Environment Variables</h3>
+        <p>Configure Cloud Run environment variables in Terraform:</p>
+        <div class="code-block">
+          <pre><code># In infra/main.tf cloud_run module
+env = [
+  {
+    name  = "GCP_PROJECT"
+    value = var.project_id
+  },
+  {
+    name  = "DATASET_ID"
+    value = var.dataset_name
+  },
+  {
+    name  = "TABLE_ID"
+    value = var.table_name
+  }
+]</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cleanup -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Clean Up Resources</h2>
+      <p class="section-subtitle">Remove all infrastructure to avoid ongoing costs</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Option 1: Terraform Destroy (Recommended)</h3>
+        <div class="code-block">
+          <pre><code># Navigate to infra directory
+cd infra/
+
+# Preview resources to be deleted
+terraform plan -destroy
+
+# Delete all infrastructure
+terraform destroy
+
+# Type 'yes' to confirm</code></pre>
+        </div>
+        <p style="margin-top: 1rem;"><strong>This removes:</strong> All resources created by Terraform including service accounts, Cloud Run, Scheduler, BigQuery dataset, and Storage bucket.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>Option 2: Manual Cleanup</h3>
+        <div class="code-block">
+          <pre><code># Delete Cloud Run service
+gcloud run services delete ingest --region=$GCP_REGION
+
+# Delete Cloud Scheduler job
+gcloud scheduler jobs delete daily-fx-ingest --location=$GCP_REGION
+
+# Delete BigQuery dataset (including all tables)
+bq rm -r -f analytics
+
+# Delete Cloud Storage bucket
+gsutil rm -r gs://[PROJECT_ID]-data-bucket
+
+# Delete service accounts
+gcloud iam service-accounts delete ingest-runner@[PROJECT_ID].iam.gserviceaccount.com
+gcloud iam service-accounts delete scheduler-invoker@[PROJECT_ID].iam.gserviceaccount.com</code></pre>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Important:</strong> Terraform destroy is safer as it only removes resources it created. Manual cleanup requires careful attention to avoid deleting unrelated resources.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cost Estimate -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Cost Estimation</h2>
+      <p class="section-subtitle">Expected monthly costs for running this infrastructure</p>
+      
+      <div class="tech-stack-grid">
+        <div class="tech-item">
+          <h4>Cloud Run</h4>
+          <p><strong>Execution:</strong> ~30 runs/month × 30s<br>
+          <strong>Free Tier:</strong> 2M requests free<br>
+          <strong>Cost:</strong> $0.00</p>
+        </div>
+        <div class="tech-item">
+          <h4>Cloud Scheduler</h4>
+          <p><strong>Jobs:</strong> 1 job<br>
+          <strong>Rate:</strong> $0.10 per job/month<br>
+          <strong>Cost:</strong> $0.10</p>
+        </div>
+        <div class="tech-item">
+          <h4>Cloud Storage</h4>
+          <p><strong>Storage:</strong> <1 GB (30-day retention)<br>
+          <strong>Rate:</strong> $0.02 per GB/month<br>
+          <strong>Cost:</strong> $0.02</p>
+        </div>
+        <div class="tech-item">
+          <h4>BigQuery Storage</h4>
+          <p><strong>Storage:</strong> <10 GB<br>
+          <strong>Rate:</strong> $0.02 per GB/month<br>
+          <strong>Cost:</strong> $0.20</p>
+        </div>
+        <div class="tech-item">
+          <h4>BigQuery Queries</h4>
+          <p><strong>Usage:</strong> Minimal ad-hoc queries<br>
+          <strong>Free Tier:</strong> 1 TB free/month<br>
+          <strong>Cost:</strong> $0.00</p>
+        </div>
+        <div class="tech-item">
+          <h4>Total</h4>
+          <p><strong>Monthly:</strong> ~$0.32<br>
+          <strong>Annual:</strong> ~$3.84<br>
+          <strong>Note:</strong> Costs may vary</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Cost Optimization Tips:</strong> This architecture is already highly optimized with scale-to-zero serverless compute, lifecycle policies, and partitioned tables. To reduce costs further, consider decreasing scheduler frequency or shortening storage retention period.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="text-align: center;">Need Help?</h2>
+      <p class="section-subtitle">Check the documentation or reach out</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="https://github.com/a-chmielewski/iaas-for-data" target="_blank" class="btn btn-primary">GitHub Repository</a>
+        <a href="https://github.com/a-chmielewski/iaas-for-data/issues" target="_blank" class="btn btn-secondary">Report an Issue</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+

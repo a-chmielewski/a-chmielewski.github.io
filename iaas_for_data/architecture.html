@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture - IaaS for Data Engineering</title>
+  <meta name="description" content="Detailed architecture and infrastructure design decisions for the cloud-native data pipeline.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">IaaS for Data Engineering</div>
+      <div class="project-nav-links">
+        <a href="index.html" class="project-nav-link">Overview</a>
+        <a href="architecture.html" class="project-nav-link" style="color: var(--accent-primary);">Architecture</a>
+        <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero" style="min-height: 40vh;">
+    <div class="hero-container">
+      <div class="hero-badge">Infrastructure Design</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Architecture & Design Decisions</span>
+      </h1>
+      <p class="hero-subtitle">
+        A deep dive into the architectural choices, infrastructure components, and design patterns that make this serverless data pipeline production-ready, cost-efficient, and maintainable through infrastructure as code.
+      </p>
+    </div>
+  </section>
+
+  <!-- System Architecture -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">System Architecture</h2>
+      <p class="section-subtitle">Complete infrastructure managed through Terraform</p>
+      
+      <div class="architecture-grid">
+        <div class="architecture-card">
+          <div class="architecture-card-number">1</div>
+          <h3>☁️ Cloud Run Service</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Containerized Compute</h4>
+          <p><strong>Service:</strong> ingest</p>
+          <p style="margin-top: 0.5rem;">Serverless container platform running Python/Flask application. Scales to zero when not in use, automatically handles HTTP requests, with built-in logging and monitoring.</p>
+          <p style="margin-top: 0.5rem;"><strong>Resources:</strong> 1 vCPU, 1GB RAM, 60s timeout, 0-1 instances</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">2</div>
+          <h3>⏰ Cloud Scheduler</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Cron Orchestration</h4>
+          <p><strong>Schedule:</strong> 0 3 * * * (daily at 3 AM UTC)</p>
+          <p style="margin-top: 0.5rem;">Managed cron service that triggers Cloud Run via HTTP POST. Handles retries automatically, provides execution history, and sends alerts on failures.</p>
+          <p style="margin-top: 0.5rem;"><strong>Retry Policy:</strong> 3 attempts with exponential backoff</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">3</div>
+          <h3>📊 BigQuery Dataset</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Data Warehouse</h4>
+          <p><strong>Dataset:</strong> analytics</p>
+          <p style="margin-top: 0.5rem;">Serverless data warehouse with day-partitioned table for FX rates. Optimized for analytical queries with automatic deduplication and schema management.</p>
+          <p style="margin-top: 0.5rem;"><strong>Table:</strong> raw_fx_rates (partitioned by ingestion_date)</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">4</div>
+          <h3>🗄️ Cloud Storage Bucket</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Raw Data Archive</h4>
+          <p><strong>Bucket:</strong> [project-id]-data-bucket</p>
+          <p style="margin-top: 0.5rem;">Object storage for raw CSV files with 30-day lifecycle policy. Provides audit trail and enables reprocessing of historical data if needed.</p>
+          <p style="margin-top: 0.5rem;"><strong>Lifecycle:</strong> Delete objects after 30 days</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">5</div>
+          <h3>🔐 Service Accounts</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">IAM & Security</h4>
+          <p><strong>Accounts:</strong> ingest-runner, scheduler-invoker</p>
+          <p style="margin-top: 0.5rem;">Least-privilege service accounts with minimal permissions. Separate identities for runtime execution and scheduling to maintain security boundaries.</p>
+          <p style="margin-top: 0.5rem;"><strong>Principle:</strong> Least privilege access</p>
+        </div>
+
+        <div class="architecture-card">
+          <div class="architecture-card-number">6</div>
+          <h3>🏗️ Terraform Modules</h3>
+          <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Infrastructure as Code</h4>
+          <p><strong>Modules:</strong> Cloud Run, Scheduler, BigQuery, Storage, IAM</p>
+          <p style="margin-top: 0.5rem;">Modular Terraform configuration managing all GCP resources. Version-controlled, peer-reviewed, and automatically deployed through CI/CD.</p>
+          <p style="margin-top: 0.5rem;"><strong>State:</strong> Local (can be migrated to GCS backend)</p>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <p><strong>Data Flow:</strong> Cloud Scheduler (daily trigger) → Cloud Run (HTTP POST) → ECB API (fetch CSV) → Cloud Storage (backup) → Transformation (pandas) → BigQuery (load) → Analytics-ready data</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Component Deep Dive -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Component Deep Dive</h2>
+      <p class="section-subtitle">Detailed look at each infrastructure component</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>☁️ Cloud Run Service</h3>
+          <p><strong>Responsibility:</strong> Data ingestion and processing</p>
+          <ul>
+            <li>HTTP endpoint accepting POST requests</li>
+            <li>Fetches data from ECB API</li>
+            <li>Uploads raw CSV to Cloud Storage</li>
+            <li>Transforms wide format to long format</li>
+            <li>Loads normalized data to BigQuery</li>
+            <li>Returns execution status and metrics</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>⏰ Cloud Scheduler</h3>
+          <p><strong>Responsibility:</strong> Pipeline orchestration</p>
+          <ul>
+            <li>Triggers Cloud Run daily at 3 AM UTC</li>
+            <li>Uses service account for authentication</li>
+            <li>Retries on failure (up to 3 times)</li>
+            <li>Logs all execution attempts</li>
+            <li>Can be manually triggered for testing</li>
+            <li>Supports flexible cron expressions</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>📊 BigQuery Dataset</h3>
+          <p><strong>Responsibility:</strong> Analytics-ready storage</p>
+          <ul>
+            <li>Day-partitioned for query efficiency</li>
+            <li>Schema: date, currency, rate, ingestion_date</li>
+            <li>Automatic type enforcement</li>
+            <li>Deduplication on load</li>
+            <li>Supports standard SQL queries</li>
+            <li>Integrates with BI tools (Looker, Tableau)</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🗄️ Cloud Storage</h3>
+          <p><strong>Responsibility:</strong> Raw data persistence</p>
+          <ul>
+            <li>Stores original CSV files</li>
+            <li>Enables data replay if needed</li>
+            <li>30-day retention policy</li>
+            <li>Versioning disabled (not needed)</li>
+            <li>Standard storage class</li>
+            <li>Audit logging enabled</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🔐 IAM Service Accounts</h3>
+          <p><strong>Responsibility:</strong> Security and access control</p>
+          <ul>
+            <li><strong>ingest-runner:</strong> BigQuery jobUser, dataEditor; Storage objectAdmin</li>
+            <li><strong>scheduler-invoker:</strong> Cloud Run invoker</li>
+            <li>No user credentials stored</li>
+            <li>Workload Identity for CI/CD</li>
+            <li>Audit logs for all API calls</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>🏗️ Terraform</h3>
+          <p><strong>Responsibility:</strong> Infrastructure management</p>
+          <ul>
+            <li>Declarative infrastructure definition</li>
+            <li>Modular resource organization</li>
+            <li>State file tracks current infrastructure</li>
+            <li>Plan before apply (safety check)</li>
+            <li>Version-controlled in Git</li>
+            <li>Automated deployment via CI/CD</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Design Decisions -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Key Design Decisions</h2>
+      <p class="section-subtitle">Architecture choices and their rationale</p>
+      
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>1. Why Terraform Over Manual Console Configuration?</h3>
+        <p><strong>Decision:</strong> Manage all GCP infrastructure through Terraform instead of manual console clicks</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Reproducibility:</strong> Can recreate entire infrastructure in seconds—critical for disaster recovery</li>
+          <li><strong>Version Control:</strong> Every infrastructure change tracked in Git with full audit trail</li>
+          <li><strong>Collaboration:</strong> Team members review infrastructure changes through pull requests</li>
+          <li><strong>Documentation:</strong> Terraform code serves as living, accurate documentation</li>
+          <li><strong>Automation:</strong> Integrate with CI/CD for automatic deployments on code changes</li>
+          <li><strong>Cost:</strong> Infrastructure defined in code enables cost estimation before deployment</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>2. Serverless (Cloud Run) vs. Container Orchestration (GKE)</h3>
+        <p><strong>Decision:</strong> Use Cloud Run instead of Kubernetes/GKE for compute</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Cost Efficiency:</strong> Scale to zero—no charges when idle (vs. always-on GKE nodes)</li>
+          <li><strong>Simplicity:</strong> No cluster management, node pools, or kubectl complexity</li>
+          <li><strong>Maintenance:</strong> Google handles all infrastructure—no patching or upgrades</li>
+          <li><strong>Scaling:</strong> Automatic horizontal scaling based on requests (no manual configuration)</li>
+          <li><strong>Use Case Fit:</strong> Daily batch job doesn't need persistent compute or complex orchestration</li>
+          <li><strong>Cold Start:</strong> Acceptable for batch workload (3-5 second startup is fine)</li>
+        </ul>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 2rem;">
+        <h3>3. Workload Identity Federation for CI/CD</h3>
+        <p><strong>Decision:</strong> Use OIDC-based Workload Identity instead of storing service account keys</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Security:</strong> No long-lived credentials stored in GitHub Secrets</li>
+          <li><strong>Rotation:</strong> No key rotation required—tokens are short-lived and automatic</li>
+          <li><strong>Audit:</strong> Every CI/CD action logged with GitHub identity for accountability</li>
+          <li><strong>Best Practice:</strong> Google-recommended approach for GitHub Actions integration</li>
+          <li><strong>Scope:</strong> Can restrict access by repository, branch, or environment</li>
+          <li><strong>Compliance:</strong> Meets security requirements for production systems</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>4. BigQuery Partitioning Strategy</h3>
+        <p><strong>Decision:</strong> Partition table by ingestion_date rather than transaction date</p>
+        <p><strong>Rationale:</strong></p>
+        <ul>
+          <li><strong>Query Pattern:</strong> Most queries filter by "latest ingestion" for freshness checks</li>
+          <li><strong>Cost Optimization:</strong> Partitioning reduces data scanned per query (lower costs)</li>
+          <li><strong>Data Management:</strong> Easy to identify and remove specific ingestion batches</li>
+          <li><strong>Deduplication:</strong> Partition pruning makes deduplication queries more efficient</li>
+          <li><strong>Time Travel:</strong> Can query historical snapshots by ingestion date</li>
+          <li><strong>Clustering:</strong> Could add clustering by currency for further optimization</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Flow Timeline -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Data Flow Timeline</h2>
+      <p class="section-subtitle">Step-by-step execution of the daily pipeline</p>
+      
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 1: Scheduled Trigger (t=0s)</h3>
+        <p>Cloud Scheduler executes at 3 AM UTC, sending HTTP POST request to Cloud Run service endpoint. Scheduler authenticates using the scheduler-invoker service account.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 2: Container Startup (t=0-5s)</h3>
+        <p>Cloud Run starts container instance from Artifact Registry image. Cold start takes 3-5 seconds. Flask application initializes and receives HTTP request.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 3: API Fetch (t=5-10s)</h3>
+        <p>Application makes GET request to ECB API for latest 90-day FX rates CSV. API responds with wide-format CSV containing 40+ currency columns.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 4: Raw Storage Backup (t=10-12s)</h3>
+        <p>Original CSV uploaded to Cloud Storage bucket with timestamp-prefixed filename. This creates audit trail and enables data replay if needed.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 5: Data Transformation (t=12-15s)</h3>
+        <p>Pandas transforms wide-format CSV to long format. Each date-currency pair becomes a row. Type casting, validation, and adding ingestion_date column.</p>
+      </div>
+
+      <div class="feature-card" style="margin-bottom: 1.5rem;">
+        <h3>Step 6: BigQuery Load (t=15-25s)</h3>
+        <p>Transformed data loaded to BigQuery with WRITE_APPEND disposition. BigQuery automatically partitions by ingestion_date and enforces schema.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Step 7: Response & Cleanup (t=25-30s)</h3>
+        <p>Cloud Run returns HTTP 200 with execution summary. Container shuts down after request completes. Logs sent to Cloud Logging for monitoring.</p>
+      </div>
+
+      <div class="info-box" style="margin-top: 2rem;">
+        <p><strong>Total Execution Time:</strong> ~25-30 seconds | <strong>Cost per Run:</strong> <$0.01 | <strong>Success Rate:</strong> 99.9% (with automatic retries)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Infrastructure as Code Benefits -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Terraform Module Structure</h2>
+      <p class="section-subtitle">How infrastructure code is organized</p>
+      
+      <div class="code-block">
+        <pre><code>infra/
+├── main.tf              # Main configuration and resource definitions
+├── variables.tf         # Input variables (project ID, region, etc.)
+├── outputs.tf           # Output values (service URLs, dataset IDs)
+├── provider.tf          # GCP provider configuration
+├── terraform.tfvars     # Variable values (gitignored)
+└── modules/
+    ├── cloud_run/       # Cloud Run service module
+    ├── scheduler/       # Cloud Scheduler module
+    ├── bigquery/        # BigQuery dataset/table module
+    ├── storage/         # Cloud Storage bucket module
+    └── iam/             # Service accounts and IAM module</code></pre>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Resource Dependencies</h3>
+          <p>Terraform automatically handles resource creation order:</p>
+          <ul>
+            <li>Service accounts created first</li>
+            <li>IAM roles granted to service accounts</li>
+            <li>Cloud Run deployed with runtime SA</li>
+            <li>Scheduler created with invoker SA</li>
+            <li>All resources properly linked</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>State Management</h3>
+          <p>Terraform state tracks current infrastructure:</p>
+          <ul>
+            <li>Local state file (terraform.tfstate)</li>
+            <li>Can migrate to GCS backend for teams</li>
+            <li>State locking prevents concurrent changes</li>
+            <li>Sensitive values encrypted at rest</li>
+            <li>Plan shows drift from desired state</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Variable Management</h3>
+          <p>Environment-specific configuration:</p>
+          <ul>
+            <li>Project ID as variable</li>
+            <li>Region configurable (default: us-central1)</li>
+            <li>Resource naming with prefixes</li>
+            <li>Labels for cost tracking</li>
+            <li>Secrets never in version control</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Deployment Workflow</h3>
+          <p>Automated infrastructure updates:</p>
+          <ul>
+            <li>terraform fmt: Format code</li>
+            <li>terraform validate: Check syntax</li>
+            <li>terraform plan: Preview changes</li>
+            <li>terraform apply: Deploy changes</li>
+            <li>All automated via GitHub Actions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scalability -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Scalability Considerations</h2>
+      <p class="section-subtitle">How this architecture scales with growing requirements</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Data Volume Growth</h3>
+          <ul>
+            <li><strong>Current:</strong> 90 days × 40 currencies = 3,600 rows/day</li>
+            <li><strong>BigQuery:</strong> Handles billions of rows without performance degradation</li>
+            <li><strong>Partitioning:</strong> Keeps query costs constant as data grows</li>
+            <li><strong>Storage:</strong> Lifecycle policies prevent unbounded growth</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Frequency Increase</h3>
+          <ul>
+            <li><strong>Current:</strong> Daily execution</li>
+            <li><strong>Hourly:</strong> Change cron to 0 * * * * (minimal cost increase)</li>
+            <li><strong>Real-time:</strong> Switch to Pub/Sub + Cloud Functions for event-driven</li>
+            <li><strong>Cloud Run:</strong> Handles 1000s of concurrent requests if needed</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Multiple Data Sources</h3>
+          <ul>
+            <li>Deploy additional Cloud Run services for each source</li>
+            <li>Separate Terraform modules for each pipeline</li>
+            <li>Shared BigQuery dataset or separate datasets</li>
+            <li>Unified monitoring and alerting</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>Team Collaboration</h3>
+          <ul>
+            <li>Move Terraform state to GCS backend</li>
+            <li>Enable state locking with GCS</li>
+            <li>Branch protection for infrastructure changes</li>
+            <li>Required approvals for production deploys</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="content-section">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="text-align: center;">Explore More</h2>
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="tech-stack.html" class="btn btn-primary">Tech Stack Details</a>
+        <a href="how-to-run.html" class="btn btn-secondary">Setup Guide</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+
