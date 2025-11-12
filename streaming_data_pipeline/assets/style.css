@@ -294,14 +294,6 @@ body {
   box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
 }
 
-.flow-step:nth-child(odd) {
-  border-right: 3px solid var(--accent-primary);
-}
-
-.flow-step:nth-child(even) {
-  border-left: 3px solid var(--accent-primary);
-}
-
 .flow-step-header {
   display: flex;
   align-items: center;
