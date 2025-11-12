@@ -35,10 +35,11 @@
   </div>
 
   <div class="project-card">
-    <span class="project-category">Coming Soon</span>
-    <h3>More Projects in Development</h3>
-    <p>Additional data engineering and data science projects are currently in development and will be added to this portfolio soon.</p>
-    <p><strong>Focus Areas:</strong> Data Quality • Data Testing • Batch vs Streaming pipelines</p>
+    <span class="project-category">Data Engineering</span>
+    <h3>Data Quality Testing Framework</h3>
+    <p>Production-ready data quality pipeline demonstrating modern data engineering practices with automated validation, transformation, and monitoring using NYC 311 Service Request data. Features Great Expectations validations, dbt transformations, and custom Plotly dashboards.</p>
+    <p><strong>Stack:</strong> Python • DuckDB • dbt • Great Expectations • Pandera • Plotly</p>
+    <a href="data_quality_testing_framework/index.html" class="project-link">View Project →</a>
   </div>
 
 </div>

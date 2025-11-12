@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Quality Testing Framework - Aleksander Chmielewski</title>
+  <meta name="description" content="Production-ready data quality pipeline demonstrating modern data engineering practices with automated validation, transformation, and monitoring using NYC 311 Service Request data.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/dq-style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="project-nav">
+    <div class="project-nav-container">
+      <div class="project-nav-title">Data Quality Testing Framework</div>
+      <div class="project-nav-links">
+        <a href="https://a-chmielewski.github.io/data-quality-testing-framework/index.html" target="_blank" class="project-nav-link">GX Docs</a>
+        <a href="https://a-chmielewski.github.io/data-quality-testing-framework/dashboard.html" target="_blank" class="project-nav-link">Dashboard</a>
+        <a href="how-to-run.html" class="project-nav-link">How to Run</a>
+        <a href="../index.html" class="project-nav-link back-to-portfolio">← Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="project-hero">
+    <div class="hero-container">
+      <div class="hero-badge">Production-Ready Data Quality Pipeline</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Data Quality Testing Framework</span>
+      </h1>
+      <p class="hero-subtitle">
+        A production-ready data quality pipeline demonstrating modern data engineering practices with automated validation, transformation, and monitoring. Built around NYC 311 Service Request data, this framework showcases end-to-end capabilities including API ingestion, schema validation, quality testing, and metrics visualization.
+      </p>
+      <div class="hero-cta">
+        <a href="https://github.com/a-chmielewski/data-quality-testing-framework" target="_blank" class="btn btn-primary">View on GitHub</a>
+        <a href="https://a-chmielewski.github.io/data-quality-testing-framework/dashboard.html" target="_blank" class="btn btn-secondary">See Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Highlights -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Project Highlights</h2>
+      <p class="section-subtitle">Key features demonstrating modern data quality engineering and best practices</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📥</div>
+          <h3>Automated Data Ingestion</h3>
+          <p>Fetches NYC 311 Service Request data from NYC Open Data API with date-range filters. Retrieves recent data (last 7 days) and historical baseline (2019) for temporal comparison and data drift detection.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <h3>Great Expectations Quality Gates</h3>
+          <p>Comprehensive data validation using Great Expectations framework. Enforces schema constraints, NOT NULL checks, uniqueness requirements, and business rules with automated HTML reports.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>dbt Transformations</h3>
+          <p>SQL-based data transformations following medallion architecture. Staging layer handles type casting and deduplication, while mart layer implements business logic for analytics-ready fact tables.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>DuckDB Analytics</h3>
+          <p>Embedded analytics database providing zero-configuration setup with exceptional performance. Maintains raw, staging, and mart schemas for complete data lineage and reproducibility.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Pandera Schema Validation</h3>
+          <p>Type-safe schema validation at API ingestion layer. Ensures data quality at the source before loading into the database, catching schema evolution and type inconsistencies early.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Custom Plotly Dashboard</h3>
+          <p>Interactive HTML dashboard with real-time metrics visualization. Displays row counts, complaint type distributions, null rate analysis, and temporal comparisons with responsive dark mode design.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Overview -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Architecture Overview</h2>
+      <p class="section-subtitle">Five-stage pipeline demonstrating modern data quality patterns</p>
+      
+      <div class="architecture-flow">
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🌐</span>
+            <h3 class="flow-step-title">Data Ingestion</h3>
+          </div>
+          <p class="flow-step-description">Python script fetches data from NYC Open Data API with Pandera validation</p>
+          <ul class="flow-step-features">
+            <li>NYC 311 API</li>
+            <li>Recent + Historical</li>
+            <li>Schema Validation</li>
+            <li>CSV Export</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🗄️</span>
+            <h3 class="flow-step-title">Raw Layer (DuckDB)</h3>
+          </div>
+          <p class="flow-step-description">Embedded database stores raw data in bronze schema for audit trails</p>
+          <ul class="flow-step-features">
+            <li>DuckDB Embedded</li>
+            <li>Raw Schema</li>
+            <li>No Transformations</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">🔨</span>
+            <h3 class="flow-step-title">dbt Transformations</h3>
+          </div>
+          <p class="flow-step-description">SQL-based transformations create staging and mart layers with data quality tests</p>
+          <ul class="flow-step-features">
+            <li>Staging Layer</li>
+            <li>Mart Layer</li>
+            <li>Type Casting</li>
+            <li>Deduplication</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">✔️</span>
+            <h3 class="flow-step-title">Great Expectations</h3>
+          </div>
+          <p class="flow-step-description">Automated validation checkpoint runs expectation suites against both datasets</p>
+          <ul class="flow-step-features">
+            <li>Expectation Suites</li>
+            <li>Checkpoint Run</li>
+            <li>HTML Reports</li>
+            <li>CI-Ready</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">📈</span>
+            <h3 class="flow-step-title">Metrics Generation</h3>
+          </div>
+          <p class="flow-step-description">Python script computes KPIs and exports JSON for dashboard consumption</p>
+          <ul class="flow-step-features">
+            <li>Row Counts</li>
+            <li>Null Ratios</li>
+            <li>Top Complaints</li>
+            <li>JSON Export</li>
+          </ul>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-header">
+            <span class="flow-step-icon">📊</span>
+            <h3 class="flow-step-title">Plotly Dashboard</h3>
+          </div>
+          <p class="flow-step-description">Interactive HTML dashboard with client-side rendering and responsive design</p>
+          <ul class="flow-step-features">
+            <li>Self-Contained</li>
+            <li>Dark Mode</li>
+            <li>Interactive Charts</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Design Philosophy:</strong> This pipeline implements a complete data quality testing framework from API ingestion to visualization. Raw data is persisted for reprocessability, quality checks run automatically, and all validation results are documented for audit trails. The Makefile-based orchestration ensures transparent, reproducible execution suitable for CI/CD integration.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Stack -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Technology Stack</h2>
+      <p class="section-subtitle">Built with modern data engineering tools and best practices</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Python 3.11+</h3>
+          <p><strong>Core Language</strong><br>
+          API ingestion scripts, data processing, and automation. Libraries include requests for API calls, pandas for data manipulation, and typer for CLI interfaces.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>DuckDB</h3>
+          <p><strong>Embedded Analytics Database</strong><br>
+          Zero-configuration embedded database with exceptional analytical performance. Maintains raw, staging, and mart schemas for complete data lineage without server overhead.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>dbt Core</h3>
+          <p><strong>Data Transformations</strong><br>
+          SQL-based transformation framework with built-in testing and documentation. Implements staging and mart layers following dimensional modeling principles with full lineage tracking.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Great Expectations</h3>
+          <p><strong>Data Quality Framework</strong><br>
+          Automated validation framework with expectation suites, checkpoints, and HTML data docs. Enforces schema constraints, uniqueness, NOT NULL checks, and business rules.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Pandera</h3>
+          <p><strong>Schema Validation</strong><br>
+          Type-safe DataFrame validation at API ingestion layer. Catches schema evolution and type inconsistencies before data enters the pipeline, ensuring data quality at the source.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Plotly</h3>
+          <p><strong>Interactive Dashboards</strong><br>
+          JavaScript visualization library for interactive charts and dashboards. Self-contained HTML files with responsive design and dark mode support for modern browsers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Quality Checks -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Data Quality Checks</h2>
+      <p class="section-subtitle">Comprehensive validation with Great Expectations</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Schema Validation</h3>
+          <p><strong>expect_table_columns_to_match_set</strong></p>
+          <p>Ensures all required columns exist in the dataset. Catches schema evolution and missing fields that could break downstream transformations.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Primary Key Constraint</h3>
+          <p><strong>expect_column_values_to_be_unique</strong></p>
+          <p>Validates that unique_key column contains no duplicates. Essential for maintaining data integrity and preventing double-counting in analytics.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>NOT NULL Checks</h3>
+          <p><strong>expect_column_values_to_not_be_null</strong></p>
+          <p>Enforces mandatory fields including created_date and complaint_type. Ensures critical business dimensions are always populated for reporting.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Volume Validation</h3>
+          <p><strong>expect_table_row_count_to_be_between</strong></p>
+          <p>Validates row counts fall within expected range (50-5000). Catches API failures, network issues, or unexpected data volume changes.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Enum Validation</h3>
+          <p><strong>expect_column_values_to_be_in_set</strong></p>
+          <p>Ensures borough values match valid NYC boroughs (Manhattan, Brooklyn, Queens, Bronx, Staten Island) with 90% threshold for data quality tolerance.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Validation Results</h3>
+          <p><strong>Automated Reporting</strong></p>
+          <p>Results stored in gx/uncommitted/validations/ with pass/fail status, statistics on unexpected values, and metadata for tracking validation history. Failed validations trigger pipeline exit codes for CI/CD integration.</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="background: var(--success-bg); border-left-color: var(--success-color);">
+        <p><strong>Production-Ready Quality Gates:</strong> All expectations run automatically through checkpoints, generating detailed HTML reports (Data Docs) for stakeholder review. Failed validations exit with code 1, enabling CI/CD pipeline integration and automated alerting.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pipeline Workflow -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">Pipeline Workflow</h2>
+      <p class="section-subtitle">Five-stage execution orchestrated with Makefile</p>
+      
+      <div class="code-block">
+        <pre><code># Run complete pipeline
+make all
+
+# Individual stages
+make fetch       # Data ingestion from API
+make dbt         # dbt transformations
+make gx          # Initialize Great Expectations (first run)
+make checkpoint  # Run validation checks
+make metrics     # Generate dashboard metrics</code></pre>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>1. Data Ingestion (make fetch)</h3>
+          <ul>
+            <li>Query NYC Open Data API with date filters</li>
+            <li>Fetch last 7 days + 2019 baseline</li>
+            <li>Validate schemas with Pandera</li>
+            <li>Export to CSV in data/ directory</li>
+            <li>Load into DuckDB raw schema</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>2. dbt Transformations (make dbt)</h3>
+          <ul>
+            <li>Staging: Type casting & deduplication</li>
+            <li>Mart: Business logic & aggregations</li>
+            <li>Built-in data quality tests</li>
+            <li>Generate lineage documentation</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>3. GX Setup (make gx)</h3>
+          <ul>
+            <li>Initialize Great Expectations context</li>
+            <li>Configure Pandas datasource</li>
+            <li>Create expectation suites</li>
+            <li>Define validation checkpoint</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>4. Quality Validation (make checkpoint)</h3>
+          <ul>
+            <li>Load datasets into GX validators</li>
+            <li>Run all expectation suites</li>
+            <li>Generate HTML Data Docs reports</li>
+            <li>Exit with failure if checks fail</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3>5. Metrics Generation (make metrics)</h3>
+          <ul>
+            <li>Compute row counts per dataset</li>
+            <li>Calculate null ratios for key columns</li>
+            <li>Identify top complaint types</li>
+            <li>Export to artifacts/metrics.json</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- External Resources -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <h2 class="section-title">Live Demonstrations</h2>
+      <p class="section-subtitle">Explore the interactive dashboard and automated data quality reports</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Custom Plotly Dashboard</h3>
+          <p>Interactive HTML dashboard featuring row count KPIs, complaint type distribution charts, and null rate analysis tables. Self-contained with responsive dark mode design.</p>
+          <a href="https://a-chmielewski.github.io/data-quality-testing-framework/dashboard.html" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">View Dashboard →</a>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <h3>Great Expectations Data Docs</h3>
+          <p>Auto-generated HTML documentation showing validation results, expectation suites, and data quality metrics. Provides complete transparency into data quality checks.</p>
+          <a href="https://a-chmielewski.github.io/data-quality-testing-framework/index.html" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">View Data Docs →</a>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Deployment Note:</strong> Both the dashboard and Great Expectations Data Docs are deployed to GitHub Pages for easy sharing with stakeholders. The dashboard fetches metrics.json dynamically, while Data Docs are regenerated on each pipeline run.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Makes This Stand Out -->
+  <section class="content-section">
+    <div class="container">
+      <h2 class="section-title">What Makes This Project Stand Out</h2>
+      <p class="section-subtitle">Industry best practices and production-ready patterns</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Complete Data Quality Framework</h3>
+          <ul>
+            <li>Schema validation at API ingestion (Pandera)</li>
+            <li>Automated quality gates (Great Expectations)</li>
+            <li>Transformation testing (dbt built-in tests)</li>
+            <li>End-to-end validation coverage</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Temporal Comparison Strategy</h3>
+          <ul>
+            <li>Recent data vs. historical baseline</li>
+            <li>Data drift detection capabilities</li>
+            <li>Seasonal pattern analysis</li>
+            <li>Historical baseline establishment</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Production-Ready Patterns</h3>
+          <ul>
+            <li>Makefile automation for reproducibility</li>
+            <li>Exit codes for CI/CD integration</li>
+            <li>Comprehensive error handling</li>
+            <li>Audit trail with raw data persistence</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏗️</div>
+          <h3>Modern Architecture</h3>
+          <ul>
+            <li>Medallion architecture (bronze/silver/gold)</li>
+            <li>Separation of concerns (raw/staging/mart)</li>
+            <li>Embedded database for simplicity</li>
+            <li>Self-service analytics with dashboards</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="content-section" style="background: var(--bg-secondary);">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="text-align: center;">Ready to Explore?</h2>
+      <p class="section-subtitle">Dive into the dashboard, data docs, or run it yourself</p>
+      
+      <div class="hero-cta" style="justify-content: center;">
+        <a href="https://a-chmielewski.github.io/data-quality-testing-framework/dashboard.html" target="_blank" class="btn btn-primary">View Dashboard</a>
+        <a href="https://a-chmielewski.github.io/data-quality-testing-framework/index.html" target="_blank" class="btn btn-secondary">Great Expectations Docs</a>
+        <a href="how-to-run.html" class="btn btn-secondary">Setup Guide</a>
+        <a href="https://github.com/a-chmielewski/data-quality-testing-framework" target="_blank" class="btn btn-secondary">GitHub Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
+    <div class="container">
+      <p style="color: var(--text-muted);">
+        © 2025 Aleksander Chmielewski | 
+        <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
+        <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
+      </p>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+        Data: NYC Open Data 311 | Tools: Python, DuckDB, dbt Core, Great Expectations, Pandera, Plotly
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
