@@ -56,3 +56,36 @@
   </div>
 
 </div>
+
+<h2 style="font-size: 2.5rem; margin-top: 5rem; margin-bottom: 2rem; font-weight: 700;">Other Projects</h2>
+
+<div class="projects-grid">
+  
+  <div class="project-card">
+    <span class="project-category">Trading Bot</span>
+    <h3>ByBitBot</h3>
+    <p>Sophisticated cryptocurrency trading bot designed for automated trading on ByBit's perpetual futures market. Features 15+ built-in strategies, dynamic strategy selection, advanced risk management with position sizing and stop-loss, and comprehensive performance tracking with real-time market analysis.</p>
+    <p><strong>Status:</strong> Real-world testing on minimal order size to validate profitability</p>
+    <p><strong>Stack:</strong> Python • ByBit API • TA-Lib • pandas • Technical Analysis • Risk Management</p>
+    <a href="https://github.com/a-chmielewski/ByBitBot" target="_blank" class="project-link">View on GitHub →</a>
+  </div>
+
+  <div class="project-card">
+    <span class="project-category">Blockchain</span>
+    <h3>SolanaSniper</h3>
+    <p>High-performance blockchain sniping bot for Solana network. Monitors new token launches and executes rapid buy/sell operations with automated transaction handling and real-time blockchain monitoring.</p>
+    <p><strong>Status:</strong> Real-world testing and bug fixing phase</p>
+    <p><strong>Stack:</strong> Python • Solana • Web3 • Blockchain • WebSocket</p>
+    <a href="https://github.com/a-chmielewski/SolanaSniper" target="_blank" class="project-link">View on GitHub →</a>
+  </div>
+
+  <div class="project-card">
+    <span class="project-category">Software Development</span>
+    <h3>YAWDA</h3>
+    <p>Yet Another Water Drinking Application - A desktop application for tracking daily water intake with notifications and analytics to help maintain healthy hydration habits.</p>
+    <p><strong>Status:</strong> Early development stage</p>
+    <p><strong>Stack:</strong> C# • .NET • Desktop Application</p>
+    <a href="https://github.com/a-chmielewski/YAWDA" target="_blank" class="project-link">View on GitHub →</a>
+  </div>
+
+</div>
