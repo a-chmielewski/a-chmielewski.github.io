@@ -277,29 +277,6 @@ body {
   position: relative;
 }
 
-.architecture-flow::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 3900px;
-  background: linear-gradient(180deg, 
-    var(--accent-primary) 0%, 
-    var(--accent-primary) 20%,
-    transparent 20%,
-    transparent 40%,
-    var(--accent-primary) 40%,
-    var(--accent-primary) 60%,
-    transparent 60%,
-    transparent 80%,
-    var(--accent-primary) 80%,
-    var(--accent-primary) 100%
-  );
-  opacity: 0.3;
-  z-index: 0;
-}
 
 .flow-step {
   background: var(--bg-tertiary);
@@ -373,10 +350,6 @@ body {
 @media (max-width: 968px) {
   .architecture-flow {
     grid-template-columns: 1fr;
-  }
-  
-  .architecture-flow::before {
-    display: none;
   }
   
   .flow-step:nth-child(odd),
