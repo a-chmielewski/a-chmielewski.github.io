@@ -18,7 +18,10 @@
     <!-- Navigation -->
     <nav class="main-nav">
       <div class="nav-container">
-        <a href="#home" class="nav-logo">AC</a>
+        <a href="#home" class="nav-logo">
+          <span class="nav-mark">AC</span>
+          <span class="nav-name">Aleksander Chmielewski</span>
+        </a>
         <div class="nav-links">
           <a href="#projects" class="nav-link">Projects</a>
           <a href="#skills" class="nav-link">Skills</a>
@@ -42,6 +45,28 @@
             <a href="#projects" class="btn btn-primary">View Projects</a>
             <a href="#contact" class="btn btn-secondary">Get in Touch</a>
           </div>
+        </div>
+        <div class="hero-panel">
+          <a href="e2e_openmeteo/index.html" class="hero-proof">
+            <span class="hero-proof-label">Weather ELT</span>
+            <span class="hero-proof-detail">Four European cities, Airflow in Docker</span>
+          </a>
+          <a href="streaming_data_pipeline/index.html" class="hero-proof">
+            <span class="hero-proof-label">Streaming</span>
+            <span class="hero-proof-detail">10-second Spark batches into Kibana</span>
+          </a>
+          <a href="lakehouse_demo/index.html" class="hero-proof">
+            <span class="hero-proof-label">Lakehouse</span>
+            <span class="hero-proof-detail">Iceberg 174.5 MB, Delta and Hudi about 348 MB</span>
+          </a>
+          <a href="iaas_for_data/index.html" class="hero-proof">
+            <span class="hero-proof-label">FX ingestion</span>
+            <span class="hero-proof-detail">Estimated at about $0.32/month</span>
+          </a>
+          <a href="data_quality_testing_framework/index.html" class="hero-proof">
+            <span class="hero-proof-label">Data quality</span>
+            <span class="hero-proof-detail">Pandera, then Great Expectations</span>
+          </a>
         </div>
       </div>
     </section>
