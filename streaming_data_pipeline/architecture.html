@@ -35,7 +35,7 @@
         <span class="gradient-text">Architecture & Design</span>
       </h1>
       <p class="hero-subtitle">
-        A deep dive into the architectural decisions, component interactions, and design patterns that make this streaming pipeline production-ready.
+        A closer look at the flow from the Binance WebSocket through Kafka, 10-second Spark micro-batches, and Kibana.
       </p>
     </div>
   </section>
@@ -52,7 +52,7 @@
           <h3>🌐 Data Source Layer</h3>
           <h4 style="color: var(--accent-primary); margin: 0.5rem 0;">Binance WebSocket API</h4>
           <p><strong>Endpoint:</strong> wss://fstream.binance.com/ws/[symbol]@aggTrade</p>
-          <p style="margin-top: 0.5rem;">Provides real-time aggregate trade events with sub-second latency. Supports automatic reconnection on disconnect.</p>
+          <p style="margin-top: 0.5rem;">Provides aggregate trade events. This pipeline processes them in 10-second Spark micro-batches. The producer reconnects after a disconnect.</p>
         </div>
 
         <div class="architecture-card">
@@ -325,7 +325,7 @@
         </div>
 
         <div class="feature-card">
-          <h3>Production Enhancements</h3>
+          <h3>Later additions</h3>
           <ul>
             <li>Add monitoring (Prometheus, Grafana)</li>
             <li>Implement alerting for failures</li>
@@ -352,7 +352,7 @@
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

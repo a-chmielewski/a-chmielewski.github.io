@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenMeteo Weather ETL Pipeline - Aleksander Chmielewski</title>
-  <meta name="description" content="Production-ready ETL pipeline with automated quality checks, dbt transformations, and Metabase dashboards. Built with Apache Airflow, PostgreSQL, and Great Expectations.">
+  <meta name="description" content="Small weather ELT for four European cities. Open-Meteo data, Great Expectations, dbt, Metabase, and Airflow in Docker.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,12 +27,12 @@
   <!-- Hero Section -->
   <section class="project-hero">
     <div class="hero-container">
-      <div class="hero-badge">Production-Ready ETL Pipeline</div>
+      <div class="hero-badge">Small local ETL project</div>
       <h1 class="hero-title">
         <span class="gradient-text">OpenMeteo Weather ETL</span>
       </h1>
       <p class="hero-subtitle">
-        End-to-end data engineering pipeline demonstrating modern ELT patterns, automated quality checks, and real-time orchestration. Built with industry-standard tools on a completely free tech stack.
+        A small end-to-end ELT for hourly weather in four European cities. Open-Meteo data lands in MinIO, passes Great Expectations checks, and is modeled with dbt for Metabase. Airflow runs the load in Docker.
       </p>
       <div class="hero-cta">
         <a href="https://github.com/a-chmielewski/endtoend-etl-openmeteo" target="_blank" class="btn btn-primary">View on GitHub</a>
@@ -45,12 +45,12 @@
   <section class="content-section">
     <div class="container">
       <h2 class="section-title">Project Highlights</h2>
-      <p class="section-subtitle">Key features demonstrating modern ELT patterns and production-ready data engineering</p>
+      <p class="section-subtitle">What this small ELT project includes</p>
       
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-icon">🔄</div>
-          <h3>Production-Grade ELT</h3>
+          <h3>ELT layout</h3>
           <p>Implements Extract-Load-Transform pattern with raw data lake, staging layer, and analytical marts following dimensional modeling best practices.</p>
         </div>
 
@@ -270,8 +270,8 @@
 
         <div class="feature-card">
           <h3>PostgreSQL 16</h3>
-          <p><strong>OLAP Database</strong><br>
-          Data warehouse storing staging tables and analytical marts. Optimized for analytical queries and aggregations.</p>
+          <p><strong>Staging and marts</strong><br>
+          PostgreSQL stores the hourly staging table and the daily city mart used by Metabase.</p>
         </div>
 
         <div class="feature-card">
@@ -330,13 +330,13 @@
         </div>
 
         <div class="stat-card">
-          <span class="stat-value">24/7</span>
-          <span class="stat-label">Hourly Updates</span>
+          <span class="stat-value">Hourly</span>
+          <span class="stat-label">Airflow schedule</span>
         </div>
 
         <div class="stat-card">
-          <span class="stat-value">100%</span>
-          <span class="stat-label">Data Quality Checks</span>
+          <span class="stat-value">Checks</span>
+          <span class="stat-label">Before each load</span>
         </div>
 
         <div class="stat-card">
@@ -351,7 +351,7 @@
   <section class="content-section" style="background: var(--bg-secondary);">
     <div class="container">
       <h2 class="section-title">What Makes This Project Stand Out</h2>
-      <p class="section-subtitle">Industry best practices and production-ready patterns</p>
+      <p class="section-subtitle">Patterns used in this project</p>
       
       <div class="feature-grid">
         <div class="feature-card">
@@ -361,7 +361,7 @@
             <li>Version Control: All code, SQL, and configurations in Git</li>
             <li>Testing: dbt tests validate data transformations automatically</li>
             <li>Documentation: Self-documenting dbt models with descriptions</li>
-            <li>CI/CD Ready: Structured for deployment to production environments</li>
+            <li>Layout that can be deployed later: code, SQL, and configuration are in Git</li>
           </ul>
         </div>
 
@@ -378,12 +378,12 @@
 
         <div class="feature-card">
           <div class="feature-icon">🎯</div>
-          <h3>Perfect for Portfolios</h3>
+          <h3>What this project covers</h3>
           <ul>
-            <li>Building production-ready pipelines from scratch</li>
-            <li>Integrating multiple data engineering tools</li>
-            <li>Implementing data quality frameworks</li>
-            <li>Following dimensional modeling principles</li>
+            <li>An API-to-dashboard ELT in Docker</li>
+            <li>Quality checks before the warehouse load</li>
+            <li>dbt tests on the daily mart</li>
+            <li>A daily grain for four European cities</li>
           </ul>
         </div>
 
@@ -419,7 +419,7 @@
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

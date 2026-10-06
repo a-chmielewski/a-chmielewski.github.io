@@ -85,7 +85,8 @@ Hudi (COW)   | 345.8 MB   | 45    | 7.7 MB        | Similar to Delta</code></pre
       </div>
 
       <div class="info-box">
-        <p><strong>Cost Impact:</strong> For a 1TB dataset, Iceberg could save ~$11.50/month in S3 standard storage ($0.023/GB) and significantly reduce S3 API costs due to fewer LIST operations.</p>
+        <p><strong>Sample totals:</strong> These sizes are from the NYC yellow-taxi sample in this demo. Delta Lake 348.2 MB and 47 files, Iceberg 174.5 MB and 24 files, Hudi 345.8 MB and 45 files.</p>
+        <p style="margin-top: 0.75rem;"><strong>Cost note:</strong> The 1 TB figure extrapolates that ratio at the $0.023/GB S3 standard rate (about $11.50/month for the roughly 500 GB difference). It is not a measured 1 TB bill.</p>
       </div>
     </div>
   </section>
@@ -287,7 +288,7 @@ WHEN NOT MATCHED THEN INSERT *</code></pre>
         <p><strong>S3 Storage Costs:</strong></p>
         <ul>
           <li>Iceberg's 50% storage savings = 50% lower S3 storage costs</li>
-          <li>For 1TB dataset: $23/month (Delta) vs $11.50/month (Iceberg)</li>
+          <li>Extrapolated to 1 TB at $0.023/GB: about $23/month (Delta) vs $11.50/month (Iceberg). This is not a measured 1 TB bill.</li>
           <li>Small file overhead increases S3 API costs (LIST operations)</li>
         </ul>
         <p style="margin-top: 1rem;"><strong>Athena Query Costs:</strong></p>
@@ -448,7 +449,7 @@ WHEN NOT MATCHED THEN INSERT *</code></pre>
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infrastructure as a Service for Data Engineering - Aleksander Chmielewski</title>
-  <meta name="description" content="Production-ready cloud infrastructure for data engineering, featuring Terraform IaC, serverless architecture on GCP, and automated CI/CD pipelines.">
+  <title>Serverless FX Ingestion with Terraform - Aleksander Chmielewski</title>
+  <meta name="description" content="Small GCP project. Terraform, Cloud Run, Cloud Scheduler, and BigQuery load daily ECB FX rates. Estimated cost about $0.32/month.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
   <!-- Navigation -->
   <nav class="project-nav">
     <div class="project-nav-container">
-      <div class="project-nav-title">IaaS for Data Engineering</div>
+      <div class="project-nav-title">Serverless FX Ingestion</div>
       <div class="project-nav-links">
         <a href="architecture.html" class="project-nav-link">Architecture</a>
         <a href="tech-stack.html" class="project-nav-link">Tech Stack</a>
@@ -28,12 +28,12 @@
   <!-- Hero Section -->
   <section class="project-hero">
     <div class="hero-container">
-      <div class="hero-badge">Production-Ready Cloud Infrastructure</div>
+      <div class="hero-badge">Small GCP project</div>
       <h1 class="hero-title">
-        <span class="gradient-text">Infrastructure as a Service for Data Engineering</span>
+        <span class="gradient-text">Serverless FX Ingestion</span>
       </h1>
       <p class="hero-subtitle">
-        A production-ready data engineering pipeline demonstrating best practices for cloud infrastructure, automated data ingestion, and modern DevOps workflows. Showcasing infrastructure as code (IaC) with Terraform, containerization, and serverless architecture on Google Cloud Platform with daily automated FX rate ingestion.
+        A small cloud build that loads daily ECB FX rates into BigQuery. Terraform defines Cloud Run, Cloud Scheduler, and BigQuery. The estimate for this workload is about $0.32/month.
       </p>
       <div class="hero-cta">
         <a href="https://github.com/a-chmielewski/iaas-for-data" target="_blank" class="btn btn-primary">View on GitHub</a>
@@ -70,7 +70,7 @@
         <div class="feature-card">
           <div class="feature-icon">💰</div>
           <h3>Cost Optimization</h3>
-          <p>Extremely cost-efficient architecture running at ~$0.32/month. Scale-to-zero serverless compute, lifecycle policies for storage, and partitioned BigQuery tables for query optimization.</p>
+          <p>Estimated cost for this small daily job is about $0.32/month. Cloud Run scales to zero, storage has a lifecycle policy, and the BigQuery table is partitioned.</p>
         </div>
 
         <div class="feature-card">
@@ -220,7 +220,7 @@
         <div class="feature-card">
           <div class="feature-icon">🤝</div>
           <h3>Collaboration</h3>
-          <p>Infrastructure code reviewed through pull requests. Team members can propose, discuss, and approve infrastructure changes.</p>
+          <p>Infrastructure changes can go through pull requests, with Terraform plan showing the diff before apply.</p>
         </div>
 
         <div class="feature-card">
@@ -232,13 +232,13 @@
         <div class="feature-card">
           <div class="feature-icon">📚</div>
           <h3>Documentation</h3>
-          <p>Code serves as living documentation. New team members can understand the entire infrastructure by reading Terraform files.</p>
+          <p>Terraform files document the infrastructure for this small project.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">🛡️</div>
           <h3>Safety</h3>
-          <p>Plan before apply prevents accidents. See exactly what will change before making any modifications to production infrastructure.</p>
+          <p>Plan before apply shows what will change before anything is applied.</p>
         </div>
       </div>
     </div>
@@ -248,7 +248,7 @@
   <section class="content-section">
     <div class="container">
       <h2 class="section-title">Cost Efficiency</h2>
-      <p class="section-subtitle">Estimated monthly costs for production deployment</p>
+      <p class="section-subtitle">Estimated monthly cost of this small workload</p>
       
       <div class="tech-stack-grid">
         <div class="tech-item">
@@ -274,7 +274,7 @@
       </div>
 
       <div class="info-box" style="margin-top: 2rem;">
-        <p><strong>Total Monthly Cost:</strong> ~$0.32/month | <strong>Annual Cost:</strong> ~$3.84/year | This demonstrates how serverless architecture with scale-to-zero capabilities can run production workloads at minimal cost while maintaining reliability and performance.</p>
+        <p><strong>Total Monthly Cost:</strong> ~$0.32/month | <strong>Annual Cost:</strong> ~$3.84/year | This is an estimate for a small daily job that stays inside the free tier for Cloud Run. It is not a billing export.</p>
       </div>
     </div>
   </section>
@@ -282,16 +282,16 @@
   <!-- BigQuery Results -->
   <section class="content-section" style="background: var(--bg-secondary);">
     <div class="container">
-      <h2 class="section-title">BigQuery Analytics</h2>
-      <p class="section-subtitle">Production data loaded and ready for analysis</p>
+      <h2 class="section-title">BigQuery results</h2>
+      <p class="section-subtitle">Sample rows from the demo table</p>
       
       <div class="dashboard-preview">
         <img src="assets/bigquery_results.png" alt="BigQuery query results showing FX rates data" class="dashboard-image">
-        <p class="dashboard-caption">BigQuery table with normalized FX rates data—partitioned by ingestion date, ready for SQL analytics and visualization tools like Looker Studio or Tableau.</p>
+        <p class="dashboard-caption">Sample rows from <code>iaas-for-data.analytics.raw_fx_rates</code>. The rate date in this extract is 2010-02-14, and a few rates are null. This is a demo load, not a live feed. The console query filters on <code>ingestion_date = CURRENT_DATE()</code>, which is the load date, not the historical rate date shown in the rows.</p>
       </div>
 
       <div class="code-block">
-        <pre><code>-- Example query: Latest EUR to USD exchange rate
+        <pre><code>-- Example query against the demo table
 SELECT 
   date,
   currency,
@@ -324,7 +324,7 @@ LIMIT 1;</code></pre>
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

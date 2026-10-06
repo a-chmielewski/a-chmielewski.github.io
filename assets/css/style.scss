@@ -126,11 +126,11 @@ a {
    Hero Section
    =================================== */
 .hero {
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   align-items: center;
   position: relative;
-  padding-top: 80px;
+  padding: 8rem 0 4rem;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
   overflow: hidden;
 }
@@ -152,13 +152,9 @@ a {
 }
 
 .hero-container {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 2rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
   position: relative;
   z-index: 1;
 }
@@ -531,15 +527,6 @@ a {
    Responsive Design
    =================================== */
 @media (max-width: 968px) {
-  .hero-container {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .hero-decoration {
-    display: none;
-  }
-
   .hero-title {
     font-size: 2.5rem;
   }
@@ -570,8 +557,17 @@ a {
     font-size: 1rem;
   }
 
+  .nav-container {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
   .nav-links {
-    display: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    justify-content: flex-end;
   }
 
   .hero-cta {
@@ -588,9 +584,5 @@ a {
 
   .container {
     padding: 0 1rem;
-  }
-
-  .nav-container {
-    padding: 1rem;
   }
 }

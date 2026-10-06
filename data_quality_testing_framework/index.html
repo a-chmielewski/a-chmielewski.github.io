@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Quality Testing Framework - Aleksander Chmielewski</title>
-  <meta name="description" content="Production-ready data quality pipeline demonstrating modern data engineering practices with automated validation, transformation, and monitoring using NYC 311 Service Request data.">
+  <meta name="description" content="Small data-quality project on NYC 311 requests. Pandera at ingest, Great Expectations before the dbt marts, DuckDB, and a Plotly dashboard.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,12 +28,12 @@
   <!-- Hero Section -->
   <section class="project-hero">
     <div class="hero-container">
-      <div class="hero-badge">Production-Ready Data Quality Pipeline</div>
+      <div class="hero-badge">Small data-quality project</div>
       <h1 class="hero-title">
         <span class="gradient-text">Data Quality Testing Framework</span>
       </h1>
       <p class="hero-subtitle">
-        A production-ready data quality pipeline demonstrating modern data engineering practices with automated validation, transformation, and monitoring. Built around NYC 311 Service Request data, this framework showcases end-to-end capabilities including API ingestion, schema validation, quality testing, and metrics visualization.
+        A small quality-check project on NYC 311 service requests. Pandera validates the API payload, Great Expectations runs before the dbt marts, and DuckDB holds raw, staging, and mart tables. Plotly draws the metrics.
       </p>
       <div class="hero-cta">
         <a href="https://github.com/a-chmielewski/data-quality-testing-framework" target="_blank" class="btn btn-primary">View on GitHub</a>
@@ -275,7 +275,7 @@
       </div>
 
       <div class="info-box" style="background: var(--success-bg); border-left-color: var(--success-color);">
-        <p><strong>Production-Ready Quality Gates:</strong> All expectations run automatically through checkpoints, generating detailed HTML reports (Data Docs) for stakeholder review. Failed validations exit with code 1, enabling CI/CD pipeline integration and automated alerting.</p>
+        <p><strong>Automated quality gates:</strong> Expectations run through checkpoints and write HTML data docs. A failed validation exits with code 1, so a later CI job can stop on a bad batch.</p>
       </div>
     </div>
   </section>
@@ -385,7 +385,7 @@ make metrics     # Generate dashboard metrics</code></pre>
   <section class="content-section">
     <div class="container">
       <h2 class="section-title">What Makes This Project Stand Out</h2>
-      <p class="section-subtitle">Industry best practices and production-ready patterns</p>
+      <p class="section-subtitle">Checks used in this project</p>
       
       <div class="feature-grid">
         <div class="feature-card">
@@ -412,7 +412,7 @@ make metrics     # Generate dashboard metrics</code></pre>
 
         <div class="feature-card">
           <div class="feature-icon">📋</div>
-          <h3>Production-Ready Patterns</h3>
+          <h3>Patterns in this project</h3>
           <ul>
             <li>Makefile automation for reproducibility</li>
             <li>Exit codes for CI/CD integration</li>
@@ -454,7 +454,7 @@ make metrics     # Generate dashboard metrics</code></pre>
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

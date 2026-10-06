@@ -1,11 +1,11 @@
 <div class="hero-section" markdown="1">
 
-<div class="hero-badge">Production-Ready ETL Pipeline</div>
+<div class="hero-badge">Small local ETL project</div>
 
 # <span class="hero-title">OpenMeteo Weather ETL</span>
 
 <p class="hero-subtitle">
-End-to-end data engineering pipeline demonstrating modern ELT patterns, automated quality checks, and real-time orchestration. Built with industry-standard tools on a completely free tech stack.
+A small end-to-end ELT for hourly weather in four European cities. Open-Meteo data lands in MinIO, passes Great Expectations checks, and is modeled with dbt for Metabase. Airflow runs the load in Docker.
 </p>
 
 [View on GitHub :fontawesome-brands-github:](https://github.com/a-chmielewski/endtoend-etl-openmeteo){ .custom-btn }
@@ -22,7 +22,7 @@ End-to-end data engineering pipeline demonstrating modern ELT patterns, automate
 <div class="feature-card" markdown="1">
 <div class="feature-icon">:material-pipeline:</div>
 
-### **Production-Grade ELT**
+### **ELT layout**
 Implements Extract-Load-Transform pattern with raw data lake, staging layer, and analytical marts following dimensional modeling best practices.
 </div>
 
@@ -157,7 +157,7 @@ Core Language
 
 <div class="tech-item" markdown="1">
 **PostgreSQL 16**  
-OLAP Database
+Staging and marts
 </div>
 
 <div class="tech-item" markdown="1">
@@ -259,14 +259,14 @@ Interactive data lineage graph showing how raw data flows through transformation
     - **Version Control**: All code, SQL, and configurations in Git
     - **Testing**: dbt tests validate data transformations automatically
     - **Documentation**: Self-documenting dbt models with descriptions
-    - **CI/CD Ready**: Structured for deployment to production environments
+    - **Layout**: Code, SQL, and configuration are in Git and can be deployed later
     - **Monitoring**: Airflow tracks task success/failure with alerting capability
     - **Scalability**: Partition-based storage supports growing data volumes
 
-!!! tip "Perfect for Data Engineering Portfolios"
+!!! tip "What this project covers"
     This project demonstrates comprehensive understanding of:
     
-    - Building production-ready pipelines from scratch
+    - An API-to-dashboard ELT in Docker
     - Integrating multiple data engineering tools
     - Implementing data quality frameworks
     - Following dimensional modeling principles

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Architecture - IaaS for Data Engineering</title>
+  <title>Architecture - Serverless FX Ingestion</title>
   <meta name="description" content="Detailed architecture and infrastructure design decisions for the cloud-native data pipeline.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
   <!-- Navigation -->
   <nav class="project-nav">
     <div class="project-nav-container">
-      <div class="project-nav-title">IaaS for Data Engineering</div>
+      <div class="project-nav-title">Serverless FX Ingestion</div>
       <div class="project-nav-links">
         <a href="index.html" class="project-nav-link">Overview</a>
         <a href="architecture.html" class="project-nav-link" style="color: var(--accent-primary);">Architecture</a>
@@ -34,7 +34,7 @@
         <span class="gradient-text">Architecture & Design Decisions</span>
       </h1>
       <p class="hero-subtitle">
-        A deep dive into the architectural choices, infrastructure components, and design patterns that make this serverless data pipeline production-ready, cost-efficient, and maintainable through infrastructure as code.
+        How this small GCP project is put together: Terraform, Cloud Run, Cloud Scheduler, and BigQuery for a daily FX load.
       </p>
     </div>
   </section>
@@ -238,7 +238,7 @@
           <li><strong>Audit:</strong> Every CI/CD action logged with GitHub identity for accountability</li>
           <li><strong>Best Practice:</strong> Google-recommended approach for GitHub Actions integration</li>
           <li><strong>Scope:</strong> Can restrict access by repository, branch, or environment</li>
-          <li><strong>Compliance:</strong> Meets security requirements for production systems</li>
+          <li><strong>Compliance:</strong> No long-lived service-account key is stored for this demo</li>
         </ul>
       </div>
 
@@ -421,7 +421,7 @@
             <li>Move Terraform state to GCS backend</li>
             <li>Enable state locking with GCS</li>
             <li>Branch protection for infrastructure changes</li>
-            <li>Required approvals for production deploys</li>
+            <li>Required approvals before apply</li>
           </ul>
         </div>
       </div>
@@ -443,7 +443,7 @@
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

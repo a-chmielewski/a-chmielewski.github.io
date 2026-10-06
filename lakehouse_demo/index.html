@@ -69,13 +69,13 @@
         <div class="feature-card">
           <div class="feature-icon">💾</div>
           <h3>Storage Efficiency Analysis</h3>
-          <p>Benchmarked storage costs across formats. Iceberg achieves ~50% storage savings compared to Delta/Hudi through superior compaction and metadata management.</p>
+          <p>On this demo's NYC yellow-taxi sample, Iceberg used 174.5 MB and 24 files. Delta used 348.2 MB and 47 files. Hudi used 345.8 MB and 45 files.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">⚡</div>
           <h3>Query Performance Testing</h3>
-          <p>Measured query performance using Amazon Athena. Delta excels at partition pruning for aggregation queries, while all formats show consistent performance on time-series analysis.</p>
+          <p>On the monthly metrics query, Iceberg scanned 175 MB. Delta and Hudi scanned about 348 MB. Runtimes were about 3.5–3.9 seconds. On the selective pickup-zone aggregation, Delta scanned 0.189 MB.</p>
         </div>
 
         <div class="feature-card">
@@ -320,7 +320,7 @@
           <div class="feature-icon">💾</div>
           <h3>Storage Efficiency</h3>
           <p><strong>Winner: Apache Iceberg</strong></p>
-          <p>Iceberg achieves ~50% storage reduction compared to Delta and Hudi through superior compaction algorithms and metadata-only operations.</p>
+          <p>Iceberg stored this sample in 174.5 MB. Delta used 348.2 MB and Hudi used 345.8 MB. The findings page labels the 1 TB cost note as an extrapolation of that ratio, not a measured bill.</p>
           <p style="margin-top: 1rem;"><strong>Impact:</strong> Lower S3 costs and fewer API calls for large datasets.</p>
         </div>
 
@@ -328,7 +328,7 @@
           <div class="feature-icon">⚡</div>
           <h3>Query Performance</h3>
           <p><strong>Best for Different Patterns:</strong></p>
-          <p>Delta excels at aggregation queries with partition pruning (0.189 MB scanned). All formats show consistent performance on time-series analysis (~348 MB scanned).</p>
+          <p>Iceberg scanned 175 MB on the monthly query. Delta and Hudi scanned about 348 MB. On the selective pickup-zone aggregation, Delta scanned 0.189 MB. Runtimes for the monthly query were about 3.5–3.9 seconds.</p>
           <p style="margin-top: 1rem;"><strong>Impact:</strong> Choose based on query patterns.</p>
         </div>
 
@@ -365,7 +365,7 @@
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real-Time Crypto Trading Pipeline - Aleksander Chmielewski</title>
-  <meta name="description" content="Production-ready streaming data pipeline processing cryptocurrency trades from Binance WebSocket API using Kafka, Spark, and Elasticsearch.">
+  <meta name="description" content="Small streaming project. Binance trades through Kafka and Spark in 10-second micro-batches, then Elasticsearch and Kibana.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,12 +29,12 @@
   <!-- Hero Section -->
   <section class="project-hero">
     <div class="hero-container">
-      <div class="hero-badge">Production-Ready Streaming Pipeline</div>
+      <div class="hero-badge">Small streaming project</div>
       <h1 class="hero-title">
         <span class="gradient-text">Real-Time Cryptocurrency Trading Data Pipeline</span>
       </h1>
       <p class="hero-subtitle">
-        A production-ready streaming data pipeline that processes real-time cryptocurrency trading data from Binance WebSocket API. Features distributed message queuing with Kafka, stream processing with Spark, and real-time visualization through Elasticsearch and Kibana dashboards.
+        A small streaming build for Binance aggregate trades. A Python producer publishes to Kafka, Spark Structured Streaming processes 10-second micro-batches, and Kibana reads from Elasticsearch. The stack runs in Docker Compose.
       </p>
       <div class="hero-cta">
         <a href="https://github.com/a-chmielewski/streaming-data-pipeline" target="_blank" class="btn btn-primary">View on GitHub</a>
@@ -53,7 +53,7 @@
         <div class="feature-card">
           <div class="feature-icon">⚡</div>
           <h3>Real-Time WebSocket Streaming</h3>
-          <p>Connects to Binance futures WebSocket API to stream live aggregate trade data. Processes cryptocurrency trades in real-time with sub-second latency.</p>
+          <p>Connects to the Binance futures WebSocket API for live aggregate trades. Spark then processes those events in 10-second micro-batches.</p>
         </div>
 
         <div class="feature-card">
@@ -104,7 +104,7 @@
           <p class="flow-step-description">Real-time cryptocurrency trading data from Binance futures market</p>
           <ul class="flow-step-features">
             <li>Live trades</li>
-            <li>Sub-second latency</li>
+            <li>Aggregate trade events</li>
             <li>JSON events</li>
           </ul>
         </div>
@@ -335,7 +335,7 @@
   <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-color);">
     <div class="container">
       <p style="color: var(--text-muted);">
-        © 2025 Aleksander Chmielewski | 
+        © 2026 Aleksander Chmielewski | 
         <a href="https://github.com/a-chmielewski" target="_blank">GitHub</a> | 
         <a href="https://www.linkedin.com/in/a-chmielewski/" target="_blank">LinkedIn</a>
       </p>

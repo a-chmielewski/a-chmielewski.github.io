@@ -20,9 +20,8 @@
       <div class="nav-container">
         <a href="#home" class="nav-logo">AC</a>
         <div class="nav-links">
-          <a href="#about" class="nav-link">About</a>
-          <a href="#skills" class="nav-link">Skills</a>
           <a href="#projects" class="nav-link">Projects</a>
+          <a href="#skills" class="nav-link">Skills</a>
           <a href="#contact" class="nav-link">Contact</a>
         </div>
       </div>
@@ -37,69 +36,11 @@
             <span class="gradient-text">Aleksander Chmielewski</span>
           </h1>
           <p class="hero-subtitle">
-            {{ site.description }}
+            A project portfolio of small, end-to-end data builds. Professional experience is on my CV.
           </p>
           <div class="hero-cta">
             <a href="#projects" class="btn btn-primary">View Projects</a>
             <a href="#contact" class="btn btn-secondary">Get in Touch</a>
-          </div>
-        </div>
-        <div class="hero-decoration">
-          <div class="code-block">
-            <div class="code-line"><span class="code-keyword">def</span> <span class="code-function">build_pipeline</span>():</div>
-            <div class="code-line">    <span class="code-comment"># Extract, Transform, Load</span></div>
-            <div class="code-line">    data = <span class="code-function">extract</span>(source)</div>
-            <div class="code-line">    clean = <span class="code-function">transform</span>(data)</div>
-            <div class="code-line">    <span class="code-function">load</span>(clean, warehouse)</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="skills-section">
-      <div class="container">
-        <h2 class="section-title">Technical Stack</h2>
-        <div class="skills-grid">
-          <div class="skill-card">
-            <div class="skill-icon">🔧</div>
-            <h3>Data Engineering & ETL</h3>
-            <p>Python, SQL (PostgreSQL, MSSQL), ETL/ELT pipeline design, dbt Core, Apache Airflow, Apache NiFi</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">💾</div>
-            <h3>Databases & Storage</h3>
-            <p>PostgreSQL, DuckDB, MinIO (S3-compatible), Query optimization, Schema design, Dimensional modeling</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">☁️</div>
-            <h3>Cloud Platforms</h3>
-            <p>AWS (S3, Lambda, Redshift, EMR, Athena, Glue), GCP (Cloud Run, BigQuery, Cloud Scheduler), Terraform (IaC)</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">⚡</div>
-            <h3>Streaming & Big Data</h3>
-            <p>Apache Kafka, Apache Spark (PySpark), Spark Streaming, Elasticsearch, Lakehouse formats (Delta Lake, Iceberg, Hudi)</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">✅</div>
-            <h3>Data Quality & Testing</h3>
-            <p>Great Expectations, Pandera, dbt tests, Data validation frameworks, Quality monitoring</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">📊</div>
-            <h3>Data Visualization & BI</h3>
-            <p>Metabase, Kibana, Power BI, Plotly, Matplotlib, Seaborn, Interactive dashboards</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">⚙️</div>
-            <h3>DevOps & Orchestration</h3>
-            <p>Docker, Docker Compose, Git, GitHub Actions, CI/CD pipelines, Apache Airflow, Workflow automation</p>
-          </div>
-          <div class="skill-card">
-            <div class="skill-icon">💻</div>
-            <h3>Programming & Tools</h3>
-            <p>Python (primary), SQL, VBA, Currently learning TypeScript/React, C#, Golang</p>
           </div>
         </div>
       </div>
@@ -109,10 +50,49 @@
     <section id="projects" class="projects-section">
       <div class="container">
         <h2 class="section-title">Project Portfolio</h2>
-        <p class="section-subtitle">End-to-end data engineering and data science projects</p>
+        <p class="section-subtitle">Five small builds: batch ELT, streaming, lakehouse formats, serverless ingestion, and data quality.</p>
         
         {{ content }}
 
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills-section">
+      <div class="container">
+        <h2 class="section-title">Tools in these projects</h2>
+        <div class="skills-grid">
+          <div class="skill-card">
+            <div class="skill-icon">🔧</div>
+            <h3>Batch ELT</h3>
+            <p>Python, SQL, dbt, Apache Airflow, PostgreSQL, MinIO</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">⚡</div>
+            <h3>Streaming</h3>
+            <p>Apache Kafka, Apache Spark Structured Streaming, Elasticsearch, Kibana</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">💾</div>
+            <h3>Lakehouse</h3>
+            <p>Delta Lake, Apache Iceberg, Apache Hudi, Spark, AWS EMR, Athena, Glue, S3</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">☁️</div>
+            <h3>Serverless ingestion</h3>
+            <p>Terraform, GCP Cloud Run, BigQuery, Cloud Scheduler, GitHub Actions</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">✅</div>
+            <h3>Data quality</h3>
+            <p>Great Expectations, Pandera, dbt tests, DuckDB</p>
+          </div>
+          <div class="skill-card">
+            <div class="skill-icon">📊</div>
+            <h3>Dashboards and delivery</h3>
+            <p>Metabase, Kibana, Plotly, Docker, Docker Compose, Git</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -149,7 +129,7 @@
     <!-- Footer -->
     <footer class="footer">
       <div class="container">
-        <p>&copy; 2025 Aleksander Chmielewski. Built with Jekyll & GitHub Pages.</p>
+        <p>&copy; 2026 Aleksander Chmielewski. Built with Jekyll & GitHub Pages.</p>
       </div>
     </footer>
 
